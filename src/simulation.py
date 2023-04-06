@@ -8,7 +8,7 @@ warnings.filterwarnings('ignore')
 
 def simulate_patient(id, freq, length):
     '''
-    Simulate a single patient's blood glucose level time series.
+    Simulate a single patient's blood glucose time series.
     
     Parameters:
     ----------------------------------
@@ -24,7 +24,7 @@ def simulate_patient(id, freq, length):
     Returns:
     ----------------------------------
     pd.DataFrame.
-        Simulated blood glucose level time series for a single patient.
+        Simulated blood glucose time series for a single patient.
         pandas.DataFrame with the following columns:
 
         'id': int.
@@ -100,7 +100,7 @@ def simulate_patient(id, freq, length):
 
 def simulate_patients(freq, length, num):
     '''
-    Simulate multiple patients' blood glucose level time series.
+    Simulate multiple patients' blood glucose time series.
     
     Parameters:
     ----------------------------------
@@ -116,8 +116,8 @@ def simulate_patients(freq, length, num):
     Returns:
     ----------------------------------
     pd.DataFrame.
-        Simulated blood glucose level time series for multiple patients.
-         pandas.DataFrame with the following columns:
+        Simulated blood glucose time series for multiple patients.
+        pandas.DataFrame with the following columns:
 
         'id': int.
             Patient id.
@@ -131,13 +131,8 @@ def simulate_patients(freq, length, num):
     
     # generate the data
     data = pd.concat([simulate_patient(id, freq, length) for id in range(num)], axis=0)
-
-    # cast the columns to the respective data types
-    data['id'] = data['id'].astype(str)
-    data['datetime'] = pd.to_datetime(data['datetime'], infer_datetime_format=True, errors='coerce').dt.tz_localize(None)
-    data['glucose'] = data['glucose'].astype(float)
     
-    # reshape the data frame from long to wide
+    # reshape the data
     data = data.set_index('datetime').groupby(by='id')['glucose'].resample(f'{freq}T').last().reset_index()
     data = data.pivot(index='datetime', columns=['id'], values=['glucose'])
     data.columns = data.columns.get_level_values(level='id')

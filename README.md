@@ -71,7 +71,7 @@ model.fit(
     learning_rate=0.0001,
     batch_size=64,
     epochs=200,
-    verbose=0
+    verbose=1
 )
 
 # generate the training set predictions
