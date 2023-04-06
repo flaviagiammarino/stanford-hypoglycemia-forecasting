@@ -1,10 +1,10 @@
+import warnings
 import datetime
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
 from scipy.ndimage import gaussian_filter1d
-from joblib import Parallel, delayed
-from tqdm import tqdm
+warnings.filterwarnings('ignore')
 
 def simulate_patient(id, freq, length):
     '''
@@ -98,7 +98,7 @@ def simulate_patient(id, freq, length):
     return pd.DataFrame({'id': id, 'datetime': ts, 'glucose': bg})
 
 
-def simulate_patients(freq, length, num, distributed=True):
+def simulate_patients(freq, length, num):
     '''
     Simulate multiple patients' blood glucose level time series.
     
@@ -112,9 +112,6 @@ def simulate_patients(freq, length, num, distributed=True):
         
     num: int.
         Number of time series (i.e. number of patients).
-
-    distributed: bool.
-        Whether to parallelize the simulations or not.
         
     Returns:
     ----------------------------------
@@ -132,8 +129,17 @@ def simulate_patients(freq, length, num, distributed=True):
             Blood glucose level.
     '''
     
-    if distributed:
-        return pd.concat(Parallel(n_jobs=-1)(delayed(lambda id: simulate_patient(id, freq, length))(id) for id in tqdm(range(num))))
+    # generate the data
+    data = pd.concat([simulate_patient(id, freq, length) for id in range(num)], axis=0)
+
+    # cast the columns to the respective data types
+    data['id'] = data['id'].astype(str)
+    data['datetime'] = pd.to_datetime(data['datetime'], infer_datetime_format=True, errors='coerce').dt.tz_localize(None)
+    data['glucose'] = data['glucose'].astype(float)
     
-    else:
-        return pd.concat([simulate_patient(id, freq, length) for id in tqdm(range(num))], axis=0)
+    # reshape the data frame from long to wide
+    data = data.set_index('datetime').groupby(by='id')['glucose'].resample(f'{freq}T').last().reset_index()
+    data = data.pivot(index='datetime', columns=['id'], values=['glucose'])
+    data.columns = data.columns.get_level_values(level='id')
+    
+    return data

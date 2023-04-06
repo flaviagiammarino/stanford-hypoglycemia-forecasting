@@ -1,3 +1,91 @@
-# stanford-hypoglycemia-forecasting
+# A machine learning model for week-ahead hypoglycemia prediction from continuous glucose monitoring data
+[//]: # (![license]&#40;https://img.shields.io/github/license/flaviagiammarino/stanford-hypoglycemia-forecasting&#41;)
+[//]: # (![languages]&#40;https://img.shields.io/github/languages/top/flaviagiammarino/stanford-hypoglycemia-forecasting&#41;)
+
+This repository contains the code used in Giammarino, F., Senanayake, R., ..., Scheinker, D. (2023). A machine learning model for week-ahead 
+hypoglycemia prediction from continuous glucose monitoring data.
+
+The code implements a machine learning classifier which takes as input the patient’s continuous glucose monitoring (CGM) data over a given week, 
+and outputs the probability that the patient will experience a hypoglycemic event over the subsequent week. 
+
+The machine learning classifier consists of two components: an unsupervised feature extraction algorithm which uses random 
+convolutional kernels to derive a large number of features from the past values of the patients' CGM time series, and a
+linear classifier which takes as input the extracted features and outputs the predicted probability of a future hypoglycemic episode. 
+
+The MiniRocket [2] algorithm for variable length inputs is used for extracting the features from the CGM data, and the code is taken directly from 
+the [official code repository](https://github.com/angus924/minirocket). 
+The linear classifier is an L1 and L2 regularised logistic regression trained with gradient descent in TensorFlow, and the code is provided in this repository.
+
 
 ![diagram](diagram.png)
+
+## Dependencies
+```bash
+pandas==1.5.3
+numpy==1.23.5
+scipy==1.10.1
+numba==0.56.4
+statsmodels==0.13.2
+scikit-learn==1.2.2
+tensorflow==2.12.0
+```
+## Usage
+```python
+from src.model import Model
+from src.simulation import simulate_patients
+from src.utils import get_sequences, split_sequences
+
+# minimum percentage of time that the patient must have worn the device over a given week
+time_worn_threshold = 0.5
+
+# blood glucose threshold below which we detect the onset of severe hypoglycemia
+blood_glucose_threshold = 54
+
+# minimum length of a severe hypoglycemic episode, in number of minutes
+episode_duration_threshold = 20
+
+# generate some dummy data
+data = simulate_patients(
+    freq=5,      # sampling frequency of the time series, in number of minutes
+    length=365,  # length of the time series, in number of days
+    num=100,     # number of time series
+)
+
+# split the data into sequences
+sequences = get_sequences(
+    data=data,
+    time_worn_threshold=time_worn_threshold,
+    blood_glucose_threshold=blood_glucose_threshold,
+    episode_duration_threshold=episode_duration_threshold,
+)
+
+# split the sequences into training and test
+training_sequences, test_sequences = split_sequences(
+    sequences=sequences,
+    test_size=0.3,
+)
+
+# fit the model to the training set
+model = Model()
+
+model.fit(
+    sequences=training_sequences,
+    l1_penalty=0.005,
+    l2_penalty=0.05,
+    learning_rate=0.0001,
+    batch_size=64,
+    epochs=200,
+    verbose=0
+)
+
+# generate the training set predictions
+training_results = model.predict(sequences=training_sequences)
+
+# generate the test set predictions
+test_results = model.predict(sequences=test_sequences)
+```
+## References
+
+[1] Dempster, A., Petitjean, F. and Webb, G.I., 2020. ROCKET: exceptionally fast and accurate time series classification using random convolutional kernels. Data Mining and Knowledge Discovery, 34(5), pp.1454-1495.    
+
+[2] Dempster, A., Schmidt, D.F. and Webb, G.I., 2021, August. Minirocket: A very fast (almost) deterministic transform for time series classification. In Proceedings of the 27th ACM SIGKDD conference on knowledge discovery & data mining (pp. 248-257).

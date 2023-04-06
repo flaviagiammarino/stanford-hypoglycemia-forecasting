@@ -14,7 +14,7 @@ from src.minirocket_variable import fit, transform
 
 class MiniRocket():
     '''
-    Feature extractor, see https://arxiv.org/pdf/2012.08791.pdf.
+    Feature extractor.
     '''
     def fit(self, sequences):
         
@@ -74,8 +74,8 @@ class Classifier():
         ])
         
         model.compile(
+            optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
             loss=tf.keras.losses.BinaryCrossentropy(from_logits=False),
-            optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate)
         )
 
         history = model.fit(
@@ -83,7 +83,7 @@ class Classifier():
             y=outputs,
             batch_size=batch_size,
             epochs=epochs,
-            verbose=verbose
+            verbose=verbose,
         )
 
         # select the threshold
@@ -173,15 +173,14 @@ class Model():
 
 def get_optimal_threshold(inputs, outputs, model):
     '''
-    Find the decision threshold that matches sensitivity and specificity.
+    Find the decision threshold that minimizes the difference between sensitivity and specificity.
     '''
     thresholds = np.linspace(0.05, 0.95, 19)
     differences = np.array([])
     for threshold in thresholds:
-        sensitivity = recall_score(y_true=outputs, y_pred=(model(inputs).numpy().flatten() >= threshold).astype(int), pos_label=1)
-        specificity = recall_score(y_true=outputs, y_pred=(model(inputs).numpy().flatten() >= threshold).astype(int), pos_label=0)
-        differences = np.append(differences, np.abs(sensitivity - specificity))
-    return thresholds[np.argmin(differences)]
+        predictions = (model(inputs).numpy().flatten() >= threshold).astype(int)
+        differences = np.append(differences, sensitivity(outputs, predictions) - specificity(outputs, predictions))
+    return thresholds[np.argmin(np.abs(differences))]
 
 
 def set_global_determinism(seed):
@@ -198,3 +197,17 @@ def set_global_determinism(seed):
     
     tf.config.threading.set_inter_op_parallelism_threads(1)
     tf.config.threading.set_intra_op_parallelism_threads(1)
+
+
+def sensitivity(y_true, y_pred):
+    '''
+    Calculate the sensitivity.
+    '''
+    return recall_score(y_true, y_pred, pos_label=1)
+
+
+def specificity(y_true, y_pred):
+    '''
+    Calculate the specificity.
+    '''
+    return recall_score(y_true, y_pred, pos_label=0)

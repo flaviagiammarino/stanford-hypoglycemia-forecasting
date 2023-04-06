@@ -53,8 +53,7 @@ def get_sequences(data,
                   blood_glucose_threshold,
                   episode_duration_threshold):
     '''
-    Get the input sequences `X` and target values `Y`, in a list of dictionaries called `sequences`
-    with the following items:
+    Generate a list of dictionaries with the following items:
     
         patient: str.
             The patient id.
@@ -118,6 +117,7 @@ def get_sequences(data,
                 })
         
     return sequences
+
 
 def split_sequences(sequences, test_size):
     '''
