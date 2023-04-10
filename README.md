@@ -32,16 +32,16 @@ tensorflow==2.12.0
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
-from src.utils import get_sequences, split_sequences
+from src.utils import get_sequences
 
 # minimum percentage of time that the patient must have worn the device over a given week
-time_worn_threshold = 0.5
+time_worn_threshold = 0.7
 
-# blood glucose threshold below which we detect the onset of severe hypoglycemia
+# blood glucose threshold below which we detect the onset of clinically significant hypoglycemia, in mg/dL
 blood_glucose_threshold = 54
 
-# minimum length of a severe hypoglycemic episode, in number of minutes
-episode_duration_threshold = 20
+# minimum length of a clinically significant hypoglycemic episode, in minutes
+episode_duration_threshold = 15
 
 # generate some dummy data
 data = simulate_patients(
@@ -50,18 +50,13 @@ data = simulate_patients(
     num=100,     # number of time series
 )
 
-# split the data into sequences
-sequences = get_sequences(
+# split the data into training and test sets
+training_sequences, test_sequences = get_sequences(
     data=data,
     time_worn_threshold=time_worn_threshold,
     blood_glucose_threshold=blood_glucose_threshold,
     episode_duration_threshold=episode_duration_threshold,
-)
-
-# split the sequences into training and test
-training_sequences, test_sequences = split_sequences(
-    sequences=sequences,
-    test_size=0.3,
+    test_size=0.2,
 )
 
 # fit the model to the training set
@@ -69,12 +64,13 @@ model = Model()
 
 model.fit(
     sequences=training_sequences,
+    num_features=10000,
     l1_penalty=0.005,
     l2_penalty=0.05,
-    learning_rate=0.0001,
-    batch_size=64,
-    epochs=200,
-    verbose=1
+    learning_rate=0.00001,
+    batch_size=32,
+    epochs=500,
+    verbose=0
 )
 
 # generate the training set predictions
