@@ -2,7 +2,6 @@ import itertools
 import pandas as pd
 import numpy as np
 
-
 def get_episodes_duration(blood_glucose,
                           blood_glucose_threshold):
     '''
@@ -54,7 +53,7 @@ def get_sequences(data,
                   episode_duration_threshold,
                   test_size):
     '''
-    Get the training and test sequences as lists of dictionaries with the following items:
+    Get the training and test data as lists of dictionaries with the following items:
 
         patient: str.
             The patient id.
