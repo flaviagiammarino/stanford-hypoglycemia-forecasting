@@ -8,10 +8,13 @@ hypoglycemia prediction from continuous glucose monitoring data.
 The code implements a machine learning classifier which takes as input the patient’s continuous glucose monitoring (CGM) data over a given week, 
 and outputs the probability that the patient will experience a hypoglycemic event over the subsequent week. 
 
-The machine learning classifier consists of two components: an unsupervised feature extraction algorithm ([1], [2]) which uses random convolutional kernels to derive a large number of features from the past values of the patients' CGM time series, and a linear classifier which takes as input the extracted features and outputs the predicted probability of a future hypoglycemic episode. 
+The machine learning classifier consists of two components: an unsupervised feature extraction algorithm which uses random convolutional 
+kernels to derive a large number of features from the past values of the patients' CGM time series, and a linear classifier which takes as input 
+the extracted features and outputs the predicted probability of a future hypoglycemic episode. 
 
-The MiniRocket [2] algorithm for variable length inputs is used for feature extraction, and the code is taken directly from 
-the [official code repository](https://github.com/angus924/minirocket). The linear classifier is an L1 and L2 regularised logistic regression trained with gradient descent in TensorFlow, and the code is provided in this repository.
+The MiniRocket [1] algorithm for variable length inputs is used for feature extraction, and the code is taken directly from 
+the [official code repository](https://github.com/angus924/minirocket). The linear classifier is an L1 and L2 regularised logistic regression trained 
+with gradient descent in TensorFlow, and the code is provided in this repository.
 
 ![diagram](diagram.png)
 
@@ -82,6 +85,4 @@ test_results = model.predict(sequences=test_sequences)
 ```
 ## References
 
-[1] Dempster, A., Petitjean, F. and Webb, G.I., 2020. ROCKET: exceptionally fast and accurate time series classification using random convolutional kernels. Data Mining and Knowledge Discovery, 34(5), pp.1454-1495.    
-
-[2] Dempster, A., Schmidt, D.F. and Webb, G.I., 2021, August. Minirocket: A very fast (almost) deterministic transform for time series classification. In Proceedings of the 27th ACM SIGKDD conference on knowledge discovery & data mining (pp. 248-257).
+[1] Dempster, A., Schmidt, D.F. and Webb, G.I., 2021, August. Minirocket: A very fast (almost) deterministic transform for time series classification. In Proceedings of the 27th ACM SIGKDD conference on knowledge discovery & data mining (pp. 248-257).

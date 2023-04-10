@@ -4,6 +4,8 @@ import random
 import numpy as np
 import pandas as pd
 from sklearn.metrics import recall_score
+from sklearn.utils import shuffle
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 logging.getLogger('tensorflow').setLevel(logging.FATAL)
 
@@ -12,58 +14,65 @@ tf.autograph.set_verbosity(0)
 
 from src.minirocket_variable import fit, transform
 
-class MiniRocket():
+class Transformer:
     '''
-    Feature extractor.
+    Transform the inputs with random convolutional kernels.
     '''
+    
+    def __init__(self, num_features):
+        self.num_features = num_features
+    
     def fit(self, sequences):
         
         # extract the input sequences
         X = np.concatenate([s['X'] for s in sequences], dtype=np.float32)
-    
+        
         # extract the lengths of the input sequences
         L = np.array([s['L'] for s in sequences], dtype=np.int32)
         
         # get the parameters
-        self.parameters = fit(X=X, L=L)
+        self.parameters = fit(X=X, L=L, num_features=self.num_features, reference_length=np.min(L))
     
     def transform(self, sequences):
         
         # extract the input sequences
         X = np.concatenate([s['X'] for s in sequences], dtype=np.float32)
-    
+        
         # extract the lengths of the input sequences
         L = np.array([s['L'] for s in sequences], dtype=np.int32)
-    
+        
         # get the features
         return transform(X=X, L=L, parameters=self.parameters)
 
 
 class Classifier():
     '''
-    Regularized linear classifier.
+    Fit an L1 and L2 regularised linear classifier to the transformed inputs.
     '''
+    
     def fit(self,
-            inputs,
-            outputs,
+            features,
+            targets,
             l1_penalty,
             l2_penalty,
             learning_rate,
             batch_size,
             epochs,
             verbose):
-        
         # copy the features and targets
-        inputs = inputs.copy()
-        outputs = outputs.copy()
+        features = features.copy()
+        targets = targets.copy()
+        
+        # shuffle the features and targets
+        features, targets = shuffle(features, targets, random_state=42)
         
         # scale the features
-        mu = np.mean(inputs, axis=0)
-        sigma = np.std(inputs, axis=0, ddof=1)
-        inputs = (inputs - mu) / sigma
-
-        # train the model
-        set_global_determinism(seed=42)
+        loc = np.mean(features, axis=0)
+        scale = np.std(features, axis=0, ddof=1)
+        features = (features - loc) / scale
+        
+        # build the model
+        set_global_determinism(42)
         
         model = tf.keras.models.Sequential([
             tf.keras.layers.Dense(
@@ -77,45 +86,54 @@ class Classifier():
             optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
             loss=tf.keras.losses.BinaryCrossentropy(from_logits=False),
         )
-
+        
+        # train the model
         history = model.fit(
-            x=inputs,
-            y=outputs,
+            x=features,
+            y=targets,
             batch_size=batch_size,
             epochs=epochs,
+            shuffle=True,
+            validation_split=0.2,
+            callbacks=[
+                tf.keras.callbacks.EarlyStopping(
+                    monitor='val_loss',
+                    patience=10,
+                    restore_best_weights=True,
+                )
+            ],
             verbose=verbose,
         )
-
+        
         # select the threshold
-        threshold = get_optimal_threshold(inputs, outputs, model)
+        threshold = get_optimal_threshold(features, targets, model)
         
         # save the objects
         self.history = history
         self.model = model
-        self.mu = mu
-        self.sigma = sigma
+        self.loc = loc
+        self.scale = scale
         self.threshold = threshold
     
-    def predict(self, inputs):
+    def predict(self, features):
         
         # scale the features
-        inputs = (inputs - self.mu) / self.sigma
+        features = (features - self.loc) / self.scale
         
         # get the predicted probabilities
-        probabilities = self.model(inputs).numpy().flatten()
+        probabilities = self.model(features).numpy().flatten()
         
         # get the predicted class labels
-        predictions = np.where(probabilities >= self.threshold, 1, 0)
+        predictions = np.where(probabilities > self.threshold, 1, 0)
         
         return predictions, probabilities
 
 
 class Model():
-    '''
-    Combined feature extractor and regularized linear classifier.
-    '''
+    
     def fit(self,
             sequences,
+            num_features,
             l1_penalty,
             l2_penalty,
             learning_rate,
@@ -124,19 +142,19 @@ class Model():
             verbose):
         
         # extract the features
-        minirocket = MiniRocket()
-        minirocket.fit(sequences)
-        Z = minirocket.transform(sequences)
-    
+        transformer = Transformer(num_features=num_features)
+        transformer.fit(sequences)
+        features = transformer.transform(sequences)
+        
         # extract the targets
-        Y = np.array([s['Y'] for s in sequences], dtype=np.int32)
-
+        targets = np.array([s['Y'] for s in sequences], dtype=np.int32)
+        
         # fit the classifier
         classifier = Classifier()
-
+        
         classifier.fit(
-            inputs=Z,
-            outputs=Y,
+            features=features,
+            targets=targets,
             l1_penalty=l1_penalty,
             l2_penalty=l2_penalty,
             learning_rate=learning_rate,
@@ -146,17 +164,17 @@ class Model():
         )
         
         # save the objects
-        self.minirocket = minirocket
+        self.transformer = transformer
         self.classifier = classifier
-
+    
     def predict(self, sequences):
         
         # extract the features
-        Z = self.minirocket.transform(sequences)
-    
+        features = self.transformer.transform(sequences)
+        
         # generate the model predictions
-        predictions, probabilities = self.classifier.predict(inputs=Z)
-    
+        predictions, probabilities = self.classifier.predict(features)
+        
         # organize the model predictions in a data frame
         results = pd.DataFrame({
             'patient': sequences[i]['patient'],
@@ -167,7 +185,7 @@ class Model():
             'predicted_probability': probabilities[i],
             'decision_threshold': self.classifier.threshold
         } for i in range(len(sequences)))
-    
+        
         return results
 
 
@@ -178,25 +196,9 @@ def get_optimal_threshold(inputs, outputs, model):
     thresholds = np.linspace(0.05, 0.95, 19)
     differences = np.array([])
     for threshold in thresholds:
-        predictions = (model(inputs).numpy().flatten() >= threshold).astype(int)
+        predictions = (model(inputs).numpy().flatten() > threshold).astype(int)
         differences = np.append(differences, sensitivity(outputs, predictions) - specificity(outputs, predictions))
     return thresholds[np.argmin(np.abs(differences))]
-
-
-def set_global_determinism(seed):
-    '''
-    Fix all sources of randomness to ensure reproducibility.
-    '''
-    os.environ['PYTHONHASHSEED'] = str(seed)
-    random.seed(seed)
-    tf.random.set_seed(seed)
-    np.random.seed(seed)
-    
-    os.environ['TF_DETERMINISTIC_OPS'] = '1'
-    os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
-    
-    tf.config.threading.set_inter_op_parallelism_threads(1)
-    tf.config.threading.set_intra_op_parallelism_threads(1)
 
 
 def sensitivity(y_true, y_pred):
@@ -211,3 +213,19 @@ def specificity(y_true, y_pred):
     Calculate the specificity.
     '''
     return recall_score(y_true, y_pred, pos_label=0)
+
+
+def set_global_determinism(seed):
+    '''
+    Fix all sources of randomness.
+    '''
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    random.seed(seed)
+    tf.random.set_seed(seed)
+    np.random.seed(seed)
+    
+    os.environ['TF_DETERMINISTIC_OPS'] = '1'
+    os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
+    
+    tf.config.threading.set_inter_op_parallelism_threads(1)
+    tf.config.threading.set_intra_op_parallelism_threads(1)

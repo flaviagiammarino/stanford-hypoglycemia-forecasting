@@ -14,9 +14,7 @@ import numpy as np
 
 @njit("float32[:](float32[:],int32[:],int32[:],int32[:],float32[:])", fastmath = True, parallel = False, cache = True)
 def _fit_biases(X, L, dilations, num_features_per_dilation, quantiles):
-    
-    np.random.seed(42)
-    
+
     num_examples = len(L)
 
     # equivalent to:
