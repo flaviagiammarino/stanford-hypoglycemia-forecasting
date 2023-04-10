@@ -13,8 +13,8 @@ episode_duration_threshold = 15
 
 # generate some dummy data
 data = simulate_patients(
-    freq=5,      # sampling frequency of the time series, in number of minutes
-    length=365,  # length of the time series, in number of days
+    freq=5,      # sampling frequency of the time series, in minutes
+    length=365,  # length of the time series, in days
     num=100,     # number of time series
 )
 
