@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import recall_score
 from sklearn.utils import shuffle
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 logging.getLogger('tensorflow').setLevel(logging.FATAL)
 
@@ -59,6 +58,7 @@ class Classifier():
             batch_size,
             epochs,
             verbose):
+        
         # copy the features and targets
         features = features.copy()
         targets = targets.copy()
