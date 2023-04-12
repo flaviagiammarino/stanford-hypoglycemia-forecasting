@@ -5,10 +5,10 @@ from src.utils import get_sequences
 # minimum percentage of time that the patient must have worn the device over a given week
 time_worn_threshold = 0.7
 
-# blood glucose threshold below which we detect the onset of clinically significant hypoglycemia, in mg/dL
+# blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
 blood_glucose_threshold = 54
 
-# minimum length of a clinically significant hypoglycemic episode, in minutes
+# minimum length of a hypoglycemic episode, in minutes
 episode_duration_threshold = 15
 
 # generate some dummy data

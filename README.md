@@ -6,7 +6,7 @@ This repository contains the code used in Giammarino, F., Senanayake, R., ..., S
 hypoglycemia prediction from continuous glucose monitoring data.
 
 The code implements a machine learning algorithm which takes as input the patient’s continuous glucose monitoring (CGM) data over a given week, 
-and outputs the probability that the patient will experience a clinically significant hypoglycemic event over the subsequent week. A clinically significant hypoglycemic event is defined as the patient's blood glucose remaining below 54 mg/dL for at least 15 consecutive minutes.
+and outputs the probability that the patient will experience a hypoglycemic event over the subsequent week.
 
 The machine learning algorithm consists of two components: an unsupervised feature extraction algorithm which uses random convolutional 
 kernels to derive a large number of features from the past values of the patients' CGM time series, and a linear classifier which takes as input the extracted features and outputs the predicted probability of a future hypoglycemic episode. 
@@ -36,10 +36,10 @@ from src.utils import get_sequences
 # minimum percentage of time that the patient must have worn the device over a given week
 time_worn_threshold = 0.7
 
-# blood glucose threshold below which we detect the onset of clinically significant hypoglycemia, in mg/dL
+# blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
 blood_glucose_threshold = 54
 
-# minimum length of a clinically significant hypoglycemic episode, in minutes
+# minimum length of a hypoglycemic episode, in minutes
 episode_duration_threshold = 15
 
 # generate some dummy data
