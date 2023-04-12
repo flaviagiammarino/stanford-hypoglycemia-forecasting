@@ -2,7 +2,7 @@
 [//]: # (![license]&#40;https://img.shields.io/github/license/flaviagiammarino/stanford-hypoglycemia-forecasting&#41;)
 [//]: # (![languages]&#40;https://img.shields.io/github/languages/top/flaviagiammarino/stanford-hypoglycemia-forecasting&#41;)
 
-This repository contains the code used in Giammarino, F., Senanayake, R., ..., Scheinker, D. (2023). A machine learning model for week-ahead 
+This repository contains the code used in Giammarino, F., Senanayake, R., [...], Scheinker, D. (2023). A machine learning model for week-ahead 
 hypoglycemia prediction from continuous glucose monitoring data.
 
 The code implements a machine learning algorithm which takes as input the patient’s continuous glucose monitoring (CGM) data over a given week, 
