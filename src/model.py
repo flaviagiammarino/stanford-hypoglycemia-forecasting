@@ -1,9 +1,10 @@
 import os
 import logging
 import random
+import json
 import numpy as np
 import pandas as pd
-from sklearn.metrics import recall_score
+from sklearn.metrics import recall_score, accuracy_score, balanced_accuracy_score, roc_auc_score
 from sklearn.utils import shuffle
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 logging.getLogger('tensorflow').setLevel(logging.FATAL)
@@ -18,9 +19,6 @@ class Transformer:
     Transform the inputs with random convolutional kernels.
     '''
     
-    def __init__(self, num_features):
-        self.num_features = num_features
-    
     def fit(self, sequences):
         
         # extract the input sequences
@@ -30,7 +28,7 @@ class Transformer:
         L = np.array([s['L'] for s in sequences], dtype=np.int32)
         
         # get the parameters
-        self.parameters = fit(X=X, L=L, num_features=self.num_features, reference_length=np.min(L))
+        self.parameters = fit(X=X, L=L, reference_length=np.min(L))
     
     def transform(self, sequences):
         
@@ -133,7 +131,6 @@ class Model():
     
     def fit(self,
             sequences,
-            num_features,
             l1_penalty,
             l2_penalty,
             learning_rate,
@@ -142,7 +139,7 @@ class Model():
             verbose):
         
         # extract the features
-        transformer = Transformer(num_features=num_features)
+        transformer = Transformer()
         transformer.fit(sequences)
         features = transformer.transform(sequences)
         
@@ -167,6 +164,63 @@ class Model():
         self.transformer = transformer
         self.classifier = classifier
     
+    def save(self, directory):
+        
+        # save the classifier
+        self.classifier.model.save(directory)
+        
+        # save the parameters
+        with open(f'{directory}/parameters.json', 'w') as f:
+            json.dump({
+                'loc': self.classifier.loc.tolist(),
+                'scale': self.classifier.scale.tolist(),
+                'threshold': self.classifier.threshold,
+                'parameters': [self.transformer.parameters[i].tolist() for i in range(len(self.transformer.parameters))]
+            }, f)
+    
+    def load(self, directory):
+        
+        # load the classifier
+        self.classifier = Classifier()
+        self.classifier.model = tf.keras.models.load_model(directory)
+        
+        # load the parameters
+        with open(f'{directory}/parameters.json', 'r') as f:
+            parameters = json.load(f)
+
+        self.classifier.loc = parameters['loc']
+        self.classifier.scale = parameters['scale']
+        self.classifier.threshold = parameters['threshold']
+        
+        self.transformer = Transformer()
+        self.transformer.parameters = (
+            np.array(parameters['parameters'][0], np.int32),
+            np.array(parameters['parameters'][1], np.int32),
+            np.array(parameters['parameters'][2], np.float32)
+        )
+    
+    def evaluate(self, sequences):
+        
+        # extract the features
+        features = self.transformer.transform(sequences)
+    
+        # extract the targets
+        targets = np.array([s['Y'] for s in sequences], dtype=np.int32)
+        
+        # generate the model predictions
+        predictions, probabilities = self.classifier.predict(features)
+        
+        # calculate the model performance metrics
+        metrics = pd.DataFrame({
+            'accuracy': [accuracy_score(targets, predictions)],
+            'balanced_accuracy': [balanced_accuracy_score(targets, predictions)],
+            'sensitivity': [sensitivity(targets, predictions)],
+            'specificity': [specificity(targets, predictions)],
+            'auc': [roc_auc_score(targets, probabilities)]
+        }).transpose()
+        
+        return metrics
+        
     def predict(self, sequences):
         
         # extract the features
@@ -180,7 +234,6 @@ class Model():
             'patient': sequences[i]['patient'],
             'start': sequences[i]['start'],
             'end': sequences[i]['end'],
-            'actual_label': sequences[i]['Y'] if 'Y' in sequences[i].keys() else None,
             'predicted_label': predictions[i],
             'predicted_probability': probabilities[i],
             'decision_threshold': self.classifier.threshold

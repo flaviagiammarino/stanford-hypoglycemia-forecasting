@@ -1,6 +1,6 @@
 from src.model import Model
 from src.simulation import simulate_patients
-from src.utils import get_sequences
+from src.utils import get_training_data
 
 # minimum percentage of time that the patient must have worn the device over a given week
 time_worn_threshold = 0.7
@@ -8,7 +8,7 @@ time_worn_threshold = 0.7
 # blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
 blood_glucose_threshold = 54
 
-# minimum length of a hypoglycemic episode, in minutes
+# minimum length of a hypoglycemic event, in minutes
 episode_duration_threshold = 15
 
 # generate some dummy data
@@ -18,32 +18,26 @@ data = simulate_patients(
     num=100,     # number of time series
 )
 
-# split the data into training and test sets
-training_sequences, test_sequences = get_sequences(
+# split the data into sequences
+sequences = get_training_data(
     data=data,
     time_worn_threshold=time_worn_threshold,
     blood_glucose_threshold=blood_glucose_threshold,
     episode_duration_threshold=episode_duration_threshold,
-    test_size=0.2,
 )
 
-# fit the model to the training set
+# train the model
 model = Model()
 
 model.fit(
-    sequences=training_sequences,
-    num_features=10000,
+    sequences=sequences,
     l1_penalty=0.005,
     l2_penalty=0.05,
     learning_rate=0.00001,
     batch_size=32,
-    epochs=500,
+    epochs=1000,
     verbose=0
 )
 
-# generate the training set predictions
-training_results = model.predict(sequences=training_sequences)
-
-# generate the test set predictions
-test_results = model.predict(sequences=test_sequences)
-
+# save the model
+model.save(directory='model')

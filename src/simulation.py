@@ -8,7 +8,7 @@ warnings.filterwarnings('ignore')
 
 def simulate_patient(id, freq, length):
     '''
-    Simulate a single patient's blood glucose time series.
+    Simulate a single patient's CGM time series.
     
     Parameters:
     ----------------------------------
@@ -24,7 +24,7 @@ def simulate_patient(id, freq, length):
     Returns:
     ----------------------------------
     pd.DataFrame.
-        Simulated blood glucose time series for a single patient.
+        Simulated CGM time series for a single patient.
         pandas.DataFrame with the following columns:
 
         'id': int.
@@ -100,7 +100,7 @@ def simulate_patient(id, freq, length):
 
 def simulate_patients(freq, length, num):
     '''
-    Simulate multiple patients' blood glucose time series.
+    Simulate multiple patients' CGM time series.
     
     Parameters:
     ----------------------------------
@@ -116,7 +116,7 @@ def simulate_patients(freq, length, num):
     Returns:
     ----------------------------------
     pd.DataFrame.
-        Simulated blood glucose time series for multiple patients.
+        Simulated CGM time series for multiple patients.
         pandas.DataFrame with the following columns:
 
         'id': int.
