@@ -153,4 +153,4 @@ predictions = model.predict(sequences=sequences)
 ```
 ## References
 
-[1] Dempster, A., Schmidt, D.F. and Webb, G.I., 2021, August. Minirocket: A very fast (almost) deterministic transform for time series classification. In Proceedings of the 27th ACM SIGKDD conference on knowledge discovery & data mining (pp. 248-257).
+[1] Dempster, A., Schmidt, D.F. and Webb, G.I., 2021, August. MiniRocket: A very fast (almost) deterministic transform for time series classification. In Proceedings of the 27th ACM SIGKDD conference on knowledge discovery & data mining (pp. 248-257).
