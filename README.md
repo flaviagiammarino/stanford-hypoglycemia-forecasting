@@ -13,7 +13,8 @@ The MiniRocket [1] algorithm for variable length inputs is used for feature extr
 the [official code repository](https://github.com/angus924/minirocket). The linear classifier is an L1 and L2 regularised logistic regression trained 
 with gradient descent in TensorFlow, and the code is provided in this repository.
 
-![diagram](diagram.png)
+<img src=diagram.png style="width:80%;margin-top:30px;margin-bottom:20px"/>
+
 
 ## Dependencies
 ```bash
