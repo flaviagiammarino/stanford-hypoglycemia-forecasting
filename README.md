@@ -13,8 +13,7 @@ The MiniRocket [1] algorithm for variable length inputs is used for feature extr
 the [official code repository](https://github.com/angus924/minirocket). The linear classifier is an L1 and L2 regularised logistic regression trained 
 with gradient descent in TensorFlow, and the code is provided in this repository.
 
-<img src=diagram.png style="width:80%;margin-top:30px;margin-bottom:20px"/>
-
+<img src=diagram.png style="width:80%;margin-top:30px;margin-bottom:20px:margin-left:10%"/>
 
 ## Dependencies
 ```bash
@@ -151,4 +150,4 @@ predictions = model.predict(sequences=sequences)
 ```
 ## References
 
-[1] Dempster, A., Schmidt, D.F. and Webb, G.I., 2021, August. MiniRocket: A very fast (almost) deterministic transform for time series classification. In Proceedings of the 27th ACM SIGKDD conference on knowledge discovery & data mining (pp. 248-257).
+[1] Dempster, A., Schmidt, D.F. and Webb, G.I., 2021, August. MiniRocket: A very fast (almost) deterministic transform for time series classification. In *Proceedings of the 27th ACM SIGKDD conference on knowledge discovery & data mining* (pp. 248-257).
