@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Giammarino
+    given-names: Flavia
+    orcid: https://orcid.org/0000-0002-3189-8373
+title: "A machine learning model for week-ahead hypoglycemia prediction from continuous glucose monitoring data"
+date-released: 2023-09-17
