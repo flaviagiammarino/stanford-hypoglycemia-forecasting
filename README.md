@@ -18,7 +18,7 @@ with gradient descent in TensorFlow, and the code is provided in this repository
     <i>
         Schematic illustration of machine learning algorithm. 
     </i>
-     <img src=diagram.png style="width:70%;"/>
+     <img src=diagram.png style="width:80%;"/>
 </p>
 
 ## Dependencies
