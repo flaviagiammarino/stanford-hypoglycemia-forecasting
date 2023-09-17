@@ -12,8 +12,13 @@ The implemented feature extraction algorithm is the MiniRocket [1] algorithm for
 the [official code repository](https://github.com/angus924/minirocket). The linear classifier is an L1 and L2 regularised logistic regression trained 
 with gradient descent in TensorFlow, and the code is provided in this repository.
 
+<br>
+
 <p align="center">
-    <img src=diagram.png style="width:70%;"/>
+    <i>
+        Schematic illustration of machine learning algorithm. 
+    </i>
+     <img src=diagram.png style="width:70%;"/>
 </p>
 
 ## Dependencies
