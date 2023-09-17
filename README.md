@@ -3,7 +3,7 @@
 This algorithm takes as input the patients' continuous glucose monitoring (CGM) data over a given week, 
 and outputs the probability that each patient will experience a hypoglycemic episode over the subsequent week. 
 
-The algorithm consists of two components: an unsupervised feature extraction algorithm that uses random convolutional 
+The algorithm consists of two components: an unsupervised feature extraction algorithm which uses random convolutional 
 kernels to derive a large number of features from the past values of the patients' CGM time series, and a linear classifier which takes 
 as input the extracted features and outputs the predicted probability of a future hypoglycemic episode.
 
