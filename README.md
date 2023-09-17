@@ -1,17 +1,15 @@
 # A machine learning model for week-ahead hypoglycemia prediction from continuous glucose monitoring data
 
 This algorithm takes as input the patient’s continuous glucose monitoring (CGM) data over a given week, 
-and outputs the probability that the patient will experience a hypoglycemic event over the subsequent week.
-
+and outputs the probability that the patient will experience a hypoglycemic event over the subsequent week. 
 The algorithm consists of two components: an unsupervised feature extraction algorithm which uses random convolutional 
 kernels to derive a large number of features from the past values of the patients' CGM time series, and a linear classifier which takes 
-as input the extracted features and outputs the predicted probability of a future hypoglycemic event. 
-
+as input the extracted features and outputs the predicted probability of a future hypoglycemic event.
 The feature extraction algorithm is the MiniRocket [1] algorithm for variable length inputs, and the code is taken directly from 
 the [official code repository](https://github.com/angus924/minirocket). The linear classifier is an L1 and L2 regularised logistic regression trained 
 with gradient descent in TensorFlow, and the code is provided in this repository.
 
-<img src=diagram.png style="width:100%;margin-top:30px;margin-bottom:20px;"/>
+<img src=diagram.png style="width:100%;padding:30px 30px 30px 30px;box-sizing:padding-box;"/>
 
 ## Dependencies
 ```bash
