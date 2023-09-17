@@ -10,7 +10,7 @@ the [official code repository](https://github.com/angus924/minirocket). The line
 with gradient descent in TensorFlow, and the code is provided in this repository.
 
 <p align="center">
-<img src=diagram.png style="width:70%;"/>
+<img src=diagram.png style="width:70%; margin-top:40px;"/>
 </p>
 
 ## Dependencies
