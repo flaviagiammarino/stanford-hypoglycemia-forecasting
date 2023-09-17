@@ -43,7 +43,10 @@ def _fit_biases(X, L, dilations, num_features_per_dilation, quantiles):
     biases = np.zeros(num_features, dtype = np.float32)
 
     feature_index_start = 0
-
+    
+    # fix the random seed, for reproducibility
+    np.random.seed(42)
+    
     for dilation_index in range(num_dilations):
 
         dilation = dilations[dilation_index]

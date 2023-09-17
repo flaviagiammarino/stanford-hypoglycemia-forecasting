@@ -14,8 +14,8 @@ episode_duration_threshold = 15
 # generate some dummy data
 data = simulate_patients(
     freq=5,      # sampling frequency of the time series, in minutes
-    length=365,  # length of the time series, in days
-    num=100,     # number of time series
+    length=70,   # length of the time series, in days
+    num=10,      # number of time series
 )
 
 # split the data into training and test sets
@@ -37,7 +37,7 @@ model.fit(
     learning_rate=0.00001,
     batch_size=32,
     epochs=1000,
-    verbose=0
+    verbose=1
 )
 
 # evaluate the model on the test set

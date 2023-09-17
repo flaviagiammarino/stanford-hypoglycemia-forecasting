@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 def get_event_durations(blood_glucose,
-                          blood_glucose_threshold):
+                        blood_glucose_threshold):
     '''
     Get the durations of the hypoglycemic events of a given patient, in minutes.
     '''
