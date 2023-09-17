@@ -1,4 +1,4 @@
-# A machine learning model for week-ahead hypoglycemia prediction from continuous glucose monitoring data
+# Machine learning algorithm for week-ahead hypoglycemia prediction from continuous glucose monitoring data
 
 This algorithm takes as input the patients' continuous glucose monitoring (CGM) data over a given week, 
 and outputs the probability that each patient will experience a hypoglycemic episode over the subsequent week. 
