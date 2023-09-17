@@ -32,7 +32,7 @@ tensorflow==2.12.0
 ```
 ## Usage
 
-### Model training
+#### Model training
 
 ```python
 from src.model import Model
@@ -79,7 +79,7 @@ model.fit(
 # save the model
 model.save(directory='model')
 ```
-### Model inference
+#### Model inference
 
 ```python
 from src.model import Model
@@ -122,7 +122,7 @@ print(predictions)
 # 8        2023-09-17 00:00:00  2023-09-23 23:55:00                0               0.002429                 0.9
 # 9        2023-09-17 00:00:00  2023-09-23 23:55:00                1               0.996193                 0.9
 ```
-### Model evaluation
+#### Model evaluation
 
 ```python
 from src.model import Model
