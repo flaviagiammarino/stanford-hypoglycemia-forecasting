@@ -1,7 +1,7 @@
 # Machine learning algorithm for week-ahead hypoglycemia prediction from continuous glucose monitoring data
 
-This algorithm takes as input the continuous glucose monitoring (CGM) readings of a given cohort of patients over a given week, 
-and outputs the probability that each patient will experience a clinically significant hypoglycemic event over the subsequent week. 
+This algorithm takes as input the patient's continuous glucose monitoring (CGM) readings over a given week, 
+and outputs the probability that the patient will experience a clinically significant hypoglycemic event over the subsequent week. 
 A clinically significant hypoglycemic event is defined as the patient’s blood glucose level remaining below 54 mg/dL for at least 15 consecutive minutes.
 
 The algorithm consists of two components: an unsupervised feature extraction algorithm which uses random convolutional 
