@@ -3,9 +3,7 @@
 ![languages](https://img.shields.io/github/languages/top/flaviagiammarino/stanford-hypoglycemia-forecasting)
 
 This algorithm takes as input the patient's continuous glucose monitoring (CGM) readings over a given week, 
-and outputs the probability that the patient will experience a clinically significant hypoglycemic event over the subsequent week. 
-
-A clinically significant hypoglycemic event is defined as the patient’s blood glucose level remaining below 54 mg/dL for at least 15 consecutive minutes.
+and outputs the probability that the patient will experience a clinically significant hypoglycemic event over the subsequent week. A clinically significant hypoglycemic event is defined as the patient’s blood glucose level remaining below 54 mg/dL for at least 15 consecutive minutes.
 
 The algorithm consists of two components: an unsupervised feature extraction algorithm which uses random convolutional 
 kernels to derive a large number of features from the past values of the patients' CGM time series, and a linear classifier which takes 
