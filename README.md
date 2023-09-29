@@ -16,15 +16,6 @@ and the code is taken directly from the [official code repository](https://githu
 The linear classifier is an L1 and L2 regularized logistic regression trained with gradient descent in TensorFlow, 
 and the code is provided in this repository.
 
-<br>
-
-<p align="center">
-    <i>
-        Schematic illustration of machine learning algorithm. 
-    </i>
-     <img src=diagram.png style="width:80%;"/>
-</p>
-
 ### Model training
 The training algorithm takes as input the CGM time series of one or more patients $`i \in \{1, 2, \ldots, N\}`$, where $`N \ge 1`$ is the number of patients. 
 It then splits the patients' CGM time series into non-overlapping one-week sequences and derives the $`(x^{i}_{t}, y^{i}_{t + 1})`$ training pairs, where
