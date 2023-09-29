@@ -61,7 +61,7 @@ The maximum number of training epochs of the linear classifier.
 
 Note that:
 - The one-week periods during which the patient has worn the device for less than `time_worn_threshold` are discared, i.e. they are not used neither for training nor for inference.
-- A hypoglycemic event is defined as the patient's blood glucose remaining below `blood_glucose_threshold` for at least this `episode_duration_threshold` consecutive minutes.
+- A hypoglycemic event is defined as the patient's blood glucose remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
 
 ## Training
 The training algorithm takes as input the CGM time series of one or more patients $`p \in \{1, 2, \ldots, N\}`$, where $`N \ge 1`$ is the number of patients. 
