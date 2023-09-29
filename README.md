@@ -7,7 +7,7 @@ The model takes as input the patient's continuous glucose monitoring (CGM) readi
 and outputs the probability that the patient will experience a hypoglycemic event over the subsequent week. 
 The model consists of two components: 
 - an unsupervised feature extraction algorithm which uses random convolutional kernels to derive a large number 
-of features from the past values of the patient's CGM time series; 
+of features from the patient's CGM time series; 
 - a regularized linear classifier which takes as input the extracted features and outputs 
 the patient's predicted hypoglycemic event probability.
 
@@ -34,11 +34,8 @@ which is obtained by minimizing the difference between sensitivity and specifici
 
 ### Model inference
 The inference algorithm takes as input the one-week sequences $`X^{i}_{t}`$ of one or more patients.
-As above, $`X^{i}_{t}`$ denotes the time series of CGM readings of patient $`i`$ on week $`t`$ (e.g. 2,016 readings for a patient wearing a 5-minute CGM sensor 100% of the time).
-
 The input sequences $`X^{i}_{t}`$ are fed to the MiniRocket algorithm, which transforms them into 9,996 features $`Z^{i}_{t}`$.
-The extracted features $`Z^{i}_{t}`$ are then passed to the linear classifier which outputs the predicted hypoglycemic event probability $`\hat{p}^{i}_{t + 1}`$ for the subsequent week $`t + 1`$.
-
+The extracted features $`Z^{i}_{t}`$ are then passed to the linear classifier which outputs the predicted hypoglycemic event probability $`\hat{p}^{i}_{t + 1}`$.
 The predicted binary labels are obtained by comparing the predicted probability $`\hat{p}^{i}_{t + 1}`$ with the decision threshold $`c`$ previously estimated on the training set.
 If $`\hat{p}^{i}_{t + 1} > c`$ (resp. $`\hat{p}^{i}_{t + 1} \le c`$) then the model predicts that patient $`i`$ will (resp. will not) experience a hypoglycemic event over the subsequent week $`t + 1`$.
 
