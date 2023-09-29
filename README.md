@@ -60,18 +60,8 @@ The input sequences $`X^{p}_{t}`$ are fed to the MiniRocket algorithm which tran
 The extract features $`Z^{p}_{t}`$ are then used together with the binary labels $`y^{p}_{t + 1}`$ for training the linear classifier.
 
 Note that the $`(X^{p}_{t}, y^{p}_{t + 1})`$ training pairs of different patients are pooled together (i.e. stacked or concatenated) before being fed to the training algorithm, i.e. the
-model is fitted to 
-$$
-  \begin{align}
-    \mathbf{X} &= \begin{bmatrix}
-           x_{1} \\
-           x_{2} \\
-           \vdots \\
-           x_{m}
-         \end{bmatrix}
-  \end{align}
+model is fitted to $`\mathbf{X} = \[X^{1}_{1} \Vert X^{1}_{2} \Vert \ldots \Vert X^{1}_{n_{1}} \ldots X^{N}_{1} \Vert X^{N}_{2} \Vert X^{N}_{n_{N}} \]`$
 
-$$
 
 
 
