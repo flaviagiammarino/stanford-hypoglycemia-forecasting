@@ -95,7 +95,7 @@ The code defines a hypoglycemic event as the patient's blood glucose level remai
 
 The code does not use the one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold`, neither for training nor for inference.
 
-The examples below show how to use the model for training and inference on a set of patients' CGM time series, which for this purpose are artificially generated.
+The examples below show how to use the code for training and inference on a set of patients' CGM time series, which for this purpose are artificially generated.
 
 ### Examples
 
