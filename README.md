@@ -92,7 +92,9 @@ The batch size used for training the linear classifier.
 The maximum number of training epochs of the linear classifier.
 
 The code defines a hypoglycemic event as the patient's blood glucose level remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
+
 The code does not use the one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold`, neither for training nor for inference.
+
 
 ### Model training
 ```python
