@@ -41,18 +41,6 @@ The predicted binary labels are obtained by comparing the predicted probability 
 If $`\hat{p}^{i}_{t + 1} > c`$, then the model predicts that patient $`i`$ is likely to experience a hypoglycemic event in the subsequent week $`t + 1`$ ($`y^{i}_{t + 1} = 1`$),
 while if $`\hat{p}^{i}_{t + 1} \le c`$, then the model predicts that patient $`i`$ is unlikely to experience a hypoglycemic event in the subsequent week $`t + 1`$ ($`y^{i}_{t + 1} = 0`$). 
 
-## Dependencies
-
-```bash
-pandas==1.5.3
-numpy==1.23.5
-scipy==1.10.1
-numba==0.56.4
-statsmodels==0.13.2
-scikit-learn==1.2.2
-tensorflow==2.12.0
-```
-
 ## Usage
 
 ### Model hyperparameters
@@ -96,7 +84,7 @@ The code defines a hypoglycemic event as the patient's blood glucose level remai
 The code does not use the one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold`, neither for training nor for inference.
 
 The examples below show how to use the model for training and inference on a set of patients' CGM time series, which for this purpose are artificially generated.
-### Model training
+### Model training example
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
@@ -142,7 +130,7 @@ model.fit(
 # save the model
 model.save(directory='model')
 ```
-### Model inference
+### Model inference example
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
@@ -184,7 +172,7 @@ print(predictions.head(10))
 # 8        8  2023-09-29 00:00:00  2023-10-05 23:55:00                0               0.083267                0.45
 # 9        9  2023-09-29 00:00:00  2023-10-05 23:55:00                1               0.999524                0.45
 ```
-### Model evaluation
+### Model evaluation example
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
@@ -237,6 +225,18 @@ print(metrics)
 # sensitivity        0.878981
 # specificity        0.958009
 # auc                0.987846
+```
+
+## Dependencies
+
+```bash
+pandas==1.5.3
+numpy==1.23.5
+scipy==1.10.1
+numba==0.56.4
+statsmodels==0.13.2
+scikit-learn==1.2.2
+tensorflow==2.12.0
 ```
 
 ## References
