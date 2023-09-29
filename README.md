@@ -25,21 +25,35 @@ and the code is provided in this repository.
 </p>
 
 ## Hyperparameters
-- `time_worn_threshold`: (`float`). The minimum percentage of time that the patient must have worn the CGM device over a given week (default = 0.7).
-- `blood_glucose_threshold`: (`int`). The blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL (default = 54).
-- `episode_duration_threshold`: (`int`). The minimum length of a hypoglycemic event, in minutes (default = 15).
-- `l1_penalty`: (`float`). The L1 penalty of the linear classifier (default = 0.005).
-- `l2_penalty`: (`float`). The L2 penalty of the linear classifier (default = 0.05).
-- `learning_rate`: (`float`). The learning rate used for training the linear classifier (default = 0.00001).
-- `batch_size`: (`int`). The batch size used for training the linear classifier (default = 32).
-- `epochs`: (`int`). The maximum number of training epochs of the linear classifier (default = 1000).
+- `time_worn_threshold`: (`float`, default = 0.7). <br>The minimum percentage of time that the patient must have worn the CGM device over a given week.
 
+
+- `blood_glucose_threshold`: (`int`, default = 54). <br>The blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL.
+
+
+- `episode_duration_threshold`: (`int`, default = 15). <br>The minimum length of a hypoglycemic event, in minutes.
+
+
+- `l1_penalty`: (`float`, default = 0.005). <br>The L1 penalty of the linear classifier.
+
+
+- `l2_penalty`: (`float`, default = 0.05). <br>The L2 penalty of the linear classifier.
+
+
+- `learning_rate`: (`float`, default = 0.00001). <br>The learning rate used for training the linear classifier.
+
+
+- `batch_size`: (`int`, default = 32). <br>The batch size used for training the linear classifier.
+
+
+- `epochs`: (`int`, default = 1000). <br>The maximum number of training epochs of the linear classifier.
 
 ## Training
-The training algorithm takes as input the CGM time series of one or more patients. 
-It then splits the time series into non-overlapping one-week subsequences and derives the $`(X^{p}_{t}, y^{p}_{t + 1})`$ training pairs, 
-where $`X^{p}_{t}`$ contains the CGM readings of patient $`p`$ on week $`t`$ and $`y^{p}_{t + 1}`$ is the binary label of patient $`p`$ 
-on week $`t + 1`$ which is equal to 1 if patient $`p`$ experienced a hypoglycemic event during week $`t + 1`$ and equal to 0 otherwise.
+The training algorithm takes as input the CGM time series of one or more patients $`p \in {1, 2, \ldots, N}`$, where $`N \ge 1`$ is the number of patients. 
+It then splits the patients' CGM time series into non-overlapping one-week subsequences and derives the $`(X^{p}_{t}, y^{p}_{t + 1})`$ training pairs, where
+- $`X^{p}_{t}`$ is the time series of CGM readings of patient $`p`$ on week $`t`$ (e.g. 2016 readings for a patient wearing a 5-minute CGM sensor 100% of the time);
+- $`y^{p}_{t + 1}`$ is the binary label of patient $`p`$ on week $`t + 1`$, which is equal to `1` if patient $`p`$ experienced a hypoglycemic event during week $`t + 1`$ and equal to `0` otherwise.
+
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
