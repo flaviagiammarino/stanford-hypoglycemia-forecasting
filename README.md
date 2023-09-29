@@ -25,29 +25,40 @@ and the code is provided in this repository.
 </p>
 
 ## Hyperparameters
-- `time_worn_threshold`: (`float`, default = 0.7). <br>The minimum percentage of time that the patient must have worn the CGM device over a given week.
+- `time_worn_threshold`: (`float`, default = 0.7). <br>
+The minimum percentage of time that the patient must have worn the CGM device over a given week.
+The one-week sequences during which the patient has worn the CGM device for less than `time_worn_threshold` are discarded, 
+i.e. they are not used neither for training nor for inference.
+
+- `blood_glucose_threshold`: (`int`, default = 54). <br>
+The blood glucose level below which we detect the onset of hypoglycemia, in mg/dL.
+A hypoglycemic event is defined as blood glocose remaining below this threshold for at least `episode_duration_threshold` minutes.
+
+- `episode_duration_threshold`: (`int`, default = 15). <br>
+The minimum length of a hypoglycemic event, in minutes.
+A hypoglycemic event is defined as blood glocose remaining below `blood_glucose_threshold` for at least this number of minutes.
+
+- `l1_penalty`: (`float`, default = 0.005). <br>
+The L1 penalty of the linear classifier.
 
 
-- `blood_glucose_threshold`: (`int`, default = 54). <br>The blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL.
+- `l2_penalty`: (`float`, default = 0.05). <br>
+The L2 penalty of the linear classifier.
 
 
-- `episode_duration_threshold`: (`int`, default = 15). <br>The minimum length of a hypoglycemic event, in minutes.
+- `learning_rate`: (`float`, default = 0.00001). <br>
+The learning rate used for training the linear classifier.
 
 
-- `l1_penalty`: (`float`, default = 0.005). <br>The L1 penalty of the linear classifier.
+- `batch_size`: (`int`, default = 32). <br>
+The batch size used for training the linear classifier.
 
 
-- `l2_penalty`: (`float`, default = 0.05). <br>The L2 penalty of the linear classifier.
+- `epochs`: (`int`, default = 1000). <br>
+The maximum number of training epochs of the linear classifier.
 
 
-- `learning_rate`: (`float`, default = 0.00001). <br>The learning rate used for training the linear classifier.
-
-
-- `batch_size`: (`int`, default = 32). <br>The batch size used for training the linear classifier.
-
-
-- `epochs`: (`int`, default = 1000). <br>The maximum number of training epochs of the linear classifier.
-
+The MiniRocket algorithm uses the default hyperparameters recommended by the authors [1] and their values are not exposed in the code.
 
 ## Training
 The training algorithm takes as input the CGM time series of one or more patients $`p \in \{1, 2, \ldots, N\}`$, where $`N \ge 1`$ is the number of patients. 
@@ -60,7 +71,7 @@ The input sequences $`X^{p}_{t}`$ are fed to the MiniRocket algorithm which tran
 The extract features $`Z^{p}_{t}`$ are then used together with the binary labels $`y^{p}_{t + 1}`$ for training the linear classifier.
 
 Note that the $`(X^{p}_{t}, y^{p}_{t + 1})`$ training pairs of different patients are pooled together (i.e. stacked or concatenated) before being fed to the model, 
-i.e. the algorithm fits one model for the entire cohort of patients, as opposed to fitting a distinct model for each patient.
+i.e. the training algorithm fits one model for the entire cohort of patients (as opposed to fitting a distinct model for each patient).
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
