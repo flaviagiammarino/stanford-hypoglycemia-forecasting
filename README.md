@@ -61,9 +61,13 @@ The extract features $`Z^{p}_{t}`$ are then used together with the binary labels
 
 Note that the $`(X^{p}_{t}, y^{p}_{t + 1})`$ training pairs of different patients are pooled together (i.e. stacked or concatenated) before being fed to the training algorithm, i.e. the
 model is fitted to 
-$$`
+$`
 \mathbf{X} = [X^{1}_{1} \Vert X^{1}_{2} \Vert \ldots \Vert X^{1}_{n_{1}} \Vert \ldots \Vert X^{N}_{1} \Vert X^{N}_{2} \Vert \ldots \Vert X^{N}_{n_{N}} ]
-`$$
+`$
+and
+$`
+\mathbf{y} = [y^{1}_{1} \Vert y^{1}_{2} \Vert \ldots \Vert y^{1}_{n_{1}} \Vert \ldots \Vert y^{N}_{1} \Vert y^{N}_{2} \Vert \ldots \Vert y^{N}_{n_{N}} ]
+`$
 
 
 
