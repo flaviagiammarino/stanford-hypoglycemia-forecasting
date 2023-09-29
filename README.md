@@ -66,7 +66,7 @@ $`
 `$
 and
 $`
-\mathbf{y} = [y^{1}_{1} \Vert y^{1}_{2} \Vert \ldots \Vert y^{1}_{n_{1}} \Vert \ldots \Vert y^{N}_{1} \Vert y^{N}_{2} \Vert \ldots \Vert y^{N}_{n_{N}} ]
+\mathbf{y} = [y^{1}_{1} y^{1}_{2} \ldots y^{1}_{n_{1}} \ldots y^{N}_{1} y^{N}_{2} \ldots y^{N}_{n_{N}} ]
 `$
 
 
