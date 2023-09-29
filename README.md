@@ -127,10 +127,11 @@ model.save(directory='model')
 The inference algorithm takes as input the CGM time series of one or more patients $`i \in \{1, 2, \ldots, N\}`$, where $`N \ge 1`$ is the number of patients. 
 It then splits the patients' CGM time series into non-overlapping one-week sequences $`X^{i}_{t}`$, where $`X^{i}_{t}`$ is the time series of 
 CGM readings of patient $`i`$ on week $`t`$ (e.g. 2,016 readings for a patient wearing a 5-minute CGM sensor 100% of the time).
+
 The input sequences $`X^{i}_{t}`$ are fed to the MiniRocket algorithm which transforms them into 9,996 features $`Z^{i}_{t}`$.
 The extracted features $`Z^{i}_{t}`$ are then passed to the linear classifier which outputs the predicted hypoglycemic event probability $`\hat{p}^{i}_{t + 1}`$.
 The predicted binary labels are obtained by comparing the predicted probability $`\hat{p}^{i}_{t + 1}`$ with the optimal threshold $`c`$ previously estimated on the training set.
-If $`\hat{p}^{i}_{t + 1} > c`$ (resp., $`\hat{p}^{i}_{t + 1} \le c`$) then the model predicts that the patient will (resp. will not) experience a hypoglycemic event over the subsequent week.
+If $`\hat{p}^{i}_{t + 1} > c`$ (resp. $`\hat{p}^{i}_{t + 1} \le c`$) then the model predicts that the patient will (resp. will not) experience a hypoglycemic event over the subsequent week.
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
