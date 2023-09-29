@@ -59,20 +59,8 @@ It then splits the patients' CGM time series into non-overlapping one-week seque
 The input sequences $`X^{p}_{t}`$ are fed to the MiniRocket algorithm which transforms them into 9,996 features $`Z^{p}_{t}`$.
 The extract features $`Z^{p}_{t}`$ are then used together with the binary labels $`y^{p}_{t + 1}`$ for training the linear classifier.
 
-Note that the $`(X^{p}_{t}, y^{p}_{t + 1})`$ training pairs of different patients are pooled together (i.e. stacked or concatenated) before being fed to the training algorithm, i.e. the
-model is fitted to 
-$`
-\mathbf{X} = [X^{1}_{1} \Vert X^{1}_{2} \Vert \ldots \Vert X^{1}_{n_{1}} \Vert \ldots \Vert X^{N}_{1} \Vert X^{N}_{2} \Vert \ldots \Vert X^{N}_{n_{N}} ]
-`$
-and
-$`
-\mathbf{y} = [y^{1}_{1} y^{1}_{2} \ldots y^{1}_{n_{1}} \ldots y^{N}_{1} y^{N}_{2} \ldots y^{N}_{n_{N}} ]
-`$
-
-
-
-
-This means that we train one model for each cohort, not one model for each patient.
+Note that the $`(X^{p}_{t}, y^{p}_{t + 1})`$ training pairs of different patients are pooled together (i.e. stacked or concatenated) before being fed to the model, 
+i.e. the algorithm fits one model for the entire cohort of patients, as opposed to fitting a distinct model for each patient.
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
