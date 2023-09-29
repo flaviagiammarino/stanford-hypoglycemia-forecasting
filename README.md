@@ -95,8 +95,9 @@ The code defines a hypoglycemic event as the patient's blood glucose level remai
 
 The code does not use the one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold`, neither for training nor for inference.
 
-
 ### Model training
+The code below is an example of how to train the model on a set of patients' CGM time series, which for this purpose are artificially generated.
+The model artifacts are saved in the `'model'` directory.
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
@@ -143,6 +144,8 @@ model.fit(
 model.save(directory='model')
 ```
 ### Model inference
+The code below is an example of how to load a pre-trained model (in this case from the `'model'` directory) and use it for inference 
+on a set of patients' CGM time series, which for this purpose are artificially generated.
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
@@ -185,6 +188,7 @@ print(predictions.head(10))
 # 9        9  2023-09-29 00:00:00  2023-10-05 23:55:00                1               0.999524                0.45
 ```
 ### Model evaluation
+The code below is an example of how to evaluate the model's classification performance on a set of patients' CGM time series, which for this purpose are artificially generated.
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
