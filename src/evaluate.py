@@ -14,8 +14,8 @@ episode_duration_threshold = 15
 # generate some dummy data
 data = simulate_patients(
     freq=5,      # sampling frequency of the time series, in minutes
-    length=70,   # length of the time series, in days
-    num=10,      # number of time series
+    length=280,  # length of the time series, in days
+    num=100,     # number of time series
 )
 
 # split the data into training and test sets
@@ -42,3 +42,10 @@ model.fit(
 
 # evaluate the model on the test set
 metrics = model.evaluate(sequences=test_sequences)
+
+print(metrics)
+# accuracy           0.942500
+# balanced_accuracy  0.918495
+# sensitivity        0.878981
+# specificity        0.958009
+# auc                0.987846

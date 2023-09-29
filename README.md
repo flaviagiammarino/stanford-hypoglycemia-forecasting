@@ -1,17 +1,19 @@
-# Machine learning algorithm for week-ahead hypoglycemia prediction from continuous glucose monitoring data
+# Machine learning model for week-ahead hypoglycemia prediction from continuous glucose monitoring data
 ![license](https://img.shields.io/github/license/flaviagiammarino/stanford-hypoglycemia-forecasting)
 ![languages](https://img.shields.io/github/languages/top/flaviagiammarino/stanford-hypoglycemia-forecasting)
 
-This algorithm takes as input the patient's continuous glucose monitoring (CGM) readings over a given week, 
-and outputs the probability that the patient will experience a clinically significant hypoglycemic event over the subsequent week. A clinically significant hypoglycemic event is defined as the patient’s blood glucose level remaining below 54 mg/dL for at least 15 consecutive minutes.
+This model takes as input the patient's continuous glucose monitoring (CGM) readings over a given week, 
+and outputs the probability that the patient will experience a hypoglycemic event over the subsequent week. 
+The model consists of two components: 
+- an unsupervised feature extraction algorithm which uses random convolutional kernels to derive a large number 
+of features from the past values of the patient's CGM time series; 
+- a regularised linear classifier which takes as input the extracted features and outputs 
+the patient's predicted hypoglycemic event probability.
 
-The algorithm consists of two components: an unsupervised feature extraction algorithm which uses random convolutional 
-kernels to derive a large number of features from the past values of the patients' CGM time series, and a linear classifier which takes 
-as input the extracted features and outputs the predicted event probability.
-
-The implemented feature extraction algorithm is the MiniRocket [1] algorithm for variable length inputs, and the code is taken directly from 
-the [official code repository](https://github.com/angus924/minirocket). The linear classifier is an L1 and L2 regularised logistic regression trained 
-with gradient descent in TensorFlow, and the code is provided in this repository.
+The feature extraction algorithm is the MiniRocket [1] algorithm for variable length inputs, 
+and the code is taken directly from the [official code repository](https://github.com/angus924/minirocket). 
+The linear classifier is an L1 and L2 regularized logistic regression trained with gradient descent in TensorFlow, 
+and the code is provided in this repository.
 
 <br>
 
@@ -22,21 +24,22 @@ with gradient descent in TensorFlow, and the code is provided in this repository
      <img src=diagram.png style="width:80%;"/>
 </p>
 
-## Dependencies
+## Hyperparameters
+- `time_worn_threshold`: (`float`). The minimum percentage of time that the patient must have worn the CGM device over a given week (default = 0.7).
+- `blood_glucose_threshold`: (`int`). The blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL (default = 54).
+- `episode_duration_threshold`: (`int`). The minimum length of a hypoglycemic event, in minutes (default = 15).
+- `l1_penalty`: (`float`). The L1 penalty of the linear classifier (default = 0.005).
+- `l2_penalty`: (`float`). The L2 penalty of the linear classifier (default = 0.05).
+- `learning_rate`: (`float`). The learning rate used for training the linear classifier (default = 0.00001).
+- `batch_size`: (`int`). The batch size used for training the linear classifier (default = 32).
+- `epochs`: (`int`). The maximum number of training epochs of the linear classifier (default = 1000).
 
-```bash
-pandas==1.5.3
-numpy==1.23.5
-scipy==1.10.1
-numba==0.56.4
-statsmodels==0.13.2
-scikit-learn==1.2.2
-tensorflow==2.12.0
-```
-## Usage
 
-#### Model training
-
+## Training
+The training algorithm takes as input the CGM time series of one or more patients. 
+It then splits the time series into non-overlapping one-week subsequences and derives the $`(X^{p}_{t}, y^{p}_{t + 1})`$ training pairs, 
+where $`X^{p}_{t}`$ contains the CGM readings of patient $`p`$ on week $`t`$ and $`y^{p}_{t + 1}`$ is the binary label of patient $`p`$ 
+on week $`t + 1`$ which is equal to 1 if patient $`p`$ experienced a hypoglycemic event during week $`t + 1`$ and equal to 0 otherwise.
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
@@ -54,8 +57,8 @@ episode_duration_threshold = 15
 # generate some dummy data
 data = simulate_patients(
     freq=5,      # sampling frequency of the time series, in minutes
-    length=70,   # length of the time series, in days
-    num=10,      # number of time series
+    length=280,  # length of the time series, in days
+    num=100,     # number of time series
 )
 
 # split the data into sequences
@@ -82,7 +85,7 @@ model.fit(
 # save the model
 model.save(directory='model')
 ```
-#### Model inference
+## Inference
 
 ```python
 from src.model import Model
@@ -96,7 +99,7 @@ time_worn_threshold = 0.7
 data = simulate_patients(
     freq=5,      # sampling frequency of the time series, in minutes
     length=7,    # length of the time series, in days
-    num=10,      # number of time series
+    num=100,     # number of time series
 )
 
 # split the data into sequences
@@ -112,20 +115,20 @@ model.load(directory='model')
 # generate the model predictions
 predictions = model.predict(sequences=sequences)
 
-print(predictions)
-# patient                start                  end  predicted_label  predicted_probability  decision_threshold                                                                                                     
-# 0        2023-09-17 00:00:00  2023-09-23 23:55:00                0               0.217435                 0.9
-# 1        2023-09-17 00:00:00  2023-09-23 23:55:00                0               0.394081                 0.9
-# 2        2023-09-17 00:00:00  2023-09-23 23:55:00                0               0.091520                 0.9
-# 3        2023-09-17 00:00:00  2023-09-23 23:55:00                0               0.007475                 0.9
-# 4        2023-09-17 00:00:00  2023-09-23 23:55:00                0               0.013187                 0.9
-# 5        2023-09-17 00:00:00  2023-09-23 23:55:00                0               0.386588                 0.9
-# 6        2023-09-17 00:00:00  2023-09-23 23:55:00                0               0.045542                 0.9
-# 7        2023-09-17 00:00:00  2023-09-23 23:55:00                1               0.999485                 0.9
-# 8        2023-09-17 00:00:00  2023-09-23 23:55:00                0               0.002429                 0.9
-# 9        2023-09-17 00:00:00  2023-09-23 23:55:00                1               0.996193                 0.9
+print(predictions.head(10))
+#    patient                start                  end  predicted_label  predicted_probability  decision_threshold
+# 0        0  2023-09-29 00:00:00  2023-10-05 23:55:00                0               0.094029                0.45
+# 1        1  2023-09-29 00:00:00  2023-10-05 23:55:00                0               0.119137                0.45
+# 2        2  2023-09-29 00:00:00  2023-10-05 23:55:00                0               0.046282                0.45
+# 3        3  2023-09-29 00:00:00  2023-10-05 23:55:00                0               0.090396                0.45
+# 4        4  2023-09-29 00:00:00  2023-10-05 23:55:00                0               0.126644                0.45
+# 5        5  2023-09-29 00:00:00  2023-10-05 23:55:00                1               0.486400                0.45
+# 6        6  2023-09-29 00:00:00  2023-10-05 23:55:00                0               0.077495                0.45
+# 7        7  2023-09-29 00:00:00  2023-10-05 23:55:00                1               0.990677                0.45
+# 8        8  2023-09-29 00:00:00  2023-10-05 23:55:00                0               0.083267                0.45
+# 9        9  2023-09-29 00:00:00  2023-10-05 23:55:00                1               0.999524                0.45
 ```
-#### Model evaluation
+## Evaluation
 
 ```python
 from src.model import Model
@@ -144,8 +147,8 @@ episode_duration_threshold = 15
 # generate some dummy data
 data = simulate_patients(
     freq=5,      # sampling frequency of the time series, in minutes
-    length=70,   # length of the time series, in days
-    num=10,      # number of time series
+    length=280,  # length of the time series, in days
+    num=100,     # number of time series
 )
 
 # split the data into training and test sets
@@ -174,11 +177,23 @@ model.fit(
 metrics = model.evaluate(sequences=test_sequences)
 
 print(metrics)
-# accuracy           0.800000
-# balanced_accuracy  0.733333
-# sensitivity        0.600000
-# specificity        0.866667
-# auc                0.786667
+# accuracy           0.942500
+# balanced_accuracy  0.918495
+# sensitivity        0.878981
+# specificity        0.958009
+# auc                0.987846
+```
+
+## Dependencies
+
+```bash
+pandas==1.5.3
+numpy==1.23.5
+scipy==1.10.1
+numba==0.56.4
+statsmodels==0.13.2
+scikit-learn==1.2.2
+tensorflow==2.12.0
 ```
 
 ## References
