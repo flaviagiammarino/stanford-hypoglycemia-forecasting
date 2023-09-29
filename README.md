@@ -17,7 +17,7 @@ The linear classifier is an L1 and L2 regularized logistic regression trained wi
 and the code is provided in this repository.
 
 ### Model training
-The training algorithm takes as input the CGM time series of one or more patients $`i \in \{1, 2, \ldots, N\}`$, where $`N \ge 1`$ is the number of patients. 
+The training algorithm takes as input the CGM time series of one or more patients $`i \in \{1, 2, \ldots, N\}`$. 
 It then splits the patients' CGM time series into non-overlapping one-week sequences and derives the $`(X^{i}_{t}, y^{i}_{t + 1})`$ training pairs, where
 
 - $`X^{i}_{t}`$ is the time series of CGM readings of patient $`i`$ on week $`t`$ (e.g. 2,016 readings for a patient wearing a 5-minute CGM sensor 100% of the time),
@@ -39,7 +39,7 @@ As above, $`X^{i}_{t}`$ denotes the time series of CGM readings of patient $`i`$
 The input sequences $`X^{i}_{t}`$ are fed to the MiniRocket algorithm, which transforms them into 9,996 features $`Z^{i}_{t}`$.
 The extracted features $`Z^{i}_{t}`$ are then passed to the linear classifier which outputs the predicted hypoglycemic event probability $`\hat{p}^{i}_{t + 1}`$ for the subsequent week $`t + 1`$.
 
-The predicted binary labels are obtained by comparing the predicted probability $`\hat{p}^{i}_{t + 1}`$ with the optimal threshold $`c`$ previously estimated on the training set.
+The predicted binary labels are obtained by comparing the predicted probability $`\hat{p}^{i}_{t + 1}`$ with the decision threshold $`c`$ previously estimated on the training set.
 If $`\hat{p}^{i}_{t + 1} > c`$ (resp. $`\hat{p}^{i}_{t + 1} \le c`$) then the model predicts that patient $`i`$ will (resp. will not) experience a hypoglycemic event over the subsequent week $`t + 1`$.
 
 ## Dependencies
