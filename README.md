@@ -57,7 +57,7 @@ tensorflow==2.12.0
 
 ## Usage
 
-## Model hyperparameters
+### Model hyperparameters
 The MiniRocket algorithm uses the default hyperparameters recommended by the authors [1] and their values are not exposed in the code.
 The remaining hyperparameters are defined as follows:
 
@@ -93,6 +93,7 @@ The batch size used for training the linear classifier.
 The maximum number of training epochs of the linear classifier.
 
 A hypoglycemic event is defined as the patient's blood glucose remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
+
 The one-week periods during which the patient has worn the device for a percentage of time lower than `time_worn_threshold` are discared, i.e. they are not used neither for training nor for inference.
 
 ### Model training
