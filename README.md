@@ -63,7 +63,7 @@ The remaining hyperparameters are defined as follows:
 
 - `time_worn_threshold`: (`float`, default = 0.7). <br>
 The minimum percentage of time that the patient must have worn the CGM device over a given week.
-
+The one-week periods during which the patient has worn the device for a percentage of time lower than `time_worn_threshold` are discared, i.e. they are not used neither for training nor for inference.
 
 - `blood_glucose_threshold`: (`int`, default = 54). <br>
 The blood glucose level below which we detect the onset of hypoglycemia, in mg/dL.
@@ -71,6 +71,7 @@ The blood glucose level below which we detect the onset of hypoglycemia, in mg/d
 
 - `episode_duration_threshold`: (`int`, default = 15). <br>
 The minimum length of a hypoglycemic event, in minutes.
+A hypoglycemic event is defined as the patient's blood glucose remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
 
 
 - `l1_penalty`: (`float`, default = 0.005). <br>
@@ -91,10 +92,6 @@ The batch size used for training the linear classifier.
 
 - `epochs`: (`int`, default = 1000). <br>
 The maximum number of training epochs of the linear classifier.
-
-A hypoglycemic event is defined as the patient's blood glucose remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
-
-The one-week periods during which the patient has worn the device for a percentage of time lower than `time_worn_threshold` are discared, i.e. they are not used neither for training nor for inference.
 
 ### Model training
 ```python
