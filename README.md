@@ -2,7 +2,7 @@
 ![license](https://img.shields.io/github/license/flaviagiammarino/stanford-hypoglycemia-forecasting)
 ![languages](https://img.shields.io/github/languages/top/flaviagiammarino/stanford-hypoglycemia-forecasting)
 
-This model takes as input the patient's continuous glucose monitoring (CGM) readings over a given week, 
+The model takes as input the patient's continuous glucose monitoring (CGM) readings over a given week, 
 and outputs the probability that the patient will experience a hypoglycemic event over the subsequent week. 
 The model consists of two components: 
 - an unsupervised feature extraction algorithm which uses random convolutional kernels to derive a large number 
@@ -48,11 +48,16 @@ and the code is provided in this repository.
 
 - `epochs`: (`int`, default = 1000). <br>The maximum number of training epochs of the linear classifier.
 
+
 ## Training
-The training algorithm takes as input the CGM time series of one or more patients $`p \in {1, 2, \ldots, N}`$, where $`N \ge 1`$ is the number of patients. 
-It then splits the patients' CGM time series into non-overlapping one-week subsequences and derives the $`(X^{p}_{t}, y^{p}_{t + 1})`$ training pairs, where
-- $`X^{p}_{t}`$ is the time series of CGM readings of patient $`p`$ on week $`t`$ (e.g. 2016 readings for a patient wearing a 5-minute CGM sensor 100% of the time);
-- $`y^{p}_{t + 1}`$ is the binary label of patient $`p`$ on week $`t + 1`$, which is equal to `1` if patient $`p`$ experienced a hypoglycemic event during week $`t + 1`$ and equal to `0` otherwise.
+The training algorithm takes as input the CGM time series of one or more patients $`p \in \{1, 2, \ldots, N\}`$, where $`N \ge 1`$ is the number of patients. 
+It then splits the patients' CGM time series into non-overlapping one-week sequences and derives the $`(X^{p}_{t}, y^{p}_{t + 1})`$ training pairs, where
+
+- $`X^{p}_{t}`$ is the time series of CGM readings of patient $`p`$ on week $`t`$ (e.g. 2,016 readings for a patient wearing a 5-minute CGM sensor 100% of the time),
+- $`y^{p}_{t + 1}`$ is the binary label of patient $`p`$ on week $`t + 1`$, which is equal to 1 if patient $`p`$ experienced a hypoglycemic event during week $`t + 1`$ and equal to 0 otherwise. 
+
+The input sequences $`X^{p}_{t}`$ are fed to the MiniRocket algorithm which transforms them into 9,996 features $`Z^{p}_{t}`$.
+The extract features $`Z^{p}_{t}`$ are then used together with the binary labels $`y^{p}_{t + 1}`$ for training the linear classifier.
 
 ```python
 from src.model import Model
