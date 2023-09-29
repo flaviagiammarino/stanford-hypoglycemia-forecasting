@@ -27,10 +27,10 @@ The input sequences $`X^{i}_{t}`$ are fed to the MiniRocket algorithm which tran
 The extracted features $`Z^{i}_{t}`$ are then used together with the binary labels $`y^{i}_{t + 1}`$ for training the linear classifier.
 
 Note that the $`(X^{i}_{t}, y^{i}_{t + 1})`$ training pairs of different patients are pooled together (i.e. stacked or concatenated) before being fed to the model, 
-i.e. the training algorithm fits one model for the entire cohort of patients (as opposed to fitting a distinct model for each patient).
+i.e. the training algorithm fits one model for the entire cohort of patients, as opposed to fitting a distinct model for each patient.
 
-In addition to learning the model parameters, the training algorithms also finds the optimal decision threshold $`c`$ on the linear classifier's predicted probabilities 
-by minimizing the difference between sensitivity and specificity. 
+In addition to learning the model parameters, the training algorithms also finds the optimal decision threshold $`c`$ on the linear classifier's predicted probabilities, 
+which is obtained by minimizing the difference between sensitivity and specificity. 
 
 ### Model inference
 The inference algorithm takes as input the CGM time series of one or more patients $`i \in \{1, 2, \ldots, N\}`$, where $`N \ge 1`$ is the number of patients. 
@@ -41,7 +41,7 @@ The input sequences $`X^{i}_{t}`$ are fed to the MiniRocket algorithm which tran
 The extracted features $`Z^{i}_{t}`$ are then passed to the linear classifier which outputs the predicted hypoglycemic event probability $`\hat{p}^{i}_{t + 1}`$ for the subsequent week $`t + 1`$.
 
 The predicted binary labels are obtained by comparing the predicted probability $`\hat{p}^{i}_{t + 1}`$ with the optimal threshold $`c`$ previously estimated on the training set.
-If $`\hat{p}^{i}_{t + 1} > c`$ (resp. $`\hat{p}^{i}_{t + 1} \le c`$) then the model predicts that the patient will (resp. will not) experience a hypoglycemic event over the subsequent week $`t + 1`$.
+If $`\hat{p}^{i}_{t + 1} > c`$ (resp. $`\hat{p}^{i}_{t + 1} \le c`$) then the model predicts that patient $`i`$ will (resp. will not) experience a hypoglycemic event over the subsequent week $`t + 1`$.
 
 ## Dependencies
 
