@@ -18,7 +18,7 @@ and the code is provided in this repository.
 
 ### Model training
 The training algorithm takes as input the CGM time series of one or more patients $`i \in \{1, 2, \ldots, N\}`$, where $`N \ge 1`$ is the number of patients. 
-It then splits the patients' CGM time series into non-overlapping one-week sequences and derives the $`(x^{i}_{t}, y^{i}_{t + 1})`$ training pairs, where
+It then splits the patients' CGM time series into non-overlapping one-week sequences and derives the $`(X^{i}_{t}, y^{i}_{t + 1})`$ training pairs, where
 
 - $`X^{i}_{t}`$ is the time series of CGM readings of patient $`i`$ on week $`t`$ (e.g. 2,016 readings for a patient wearing a 5-minute CGM sensor 100% of the time),
 - $`y^{i}_{t + 1}`$ is the binary label of patient $`i`$ on week $`t + 1`$, which is equal to 1 if patient $`i`$ experienced a hypoglycemic event during week $`t + 1`$ and equal to 0 otherwise. 
@@ -27,7 +27,7 @@ The input sequences $`X^{i}_{t}`$ are fed to the MiniRocket algorithm which tran
 The extracted features $`Z^{i}_{t}`$ are then used together with the binary labels $`y^{i}_{t + 1}`$ for training the linear classifier.
 
 Note that the $`(X^{i}_{t}, y^{i}_{t + 1})`$ training pairs of different patients are pooled together (i.e. stacked or concatenated) before being fed to the model, 
-i.e. the training algorithm fits one model for the entire cohort of patients, as opposed to fitting a distinct model for each patient.
+i.e. the training algorithm fits a unique model for the entire cohort of patients, as opposed to fitting a distinct model for each patient.
 
 In addition to learning the model parameters, the training algorithms also finds the optimal decision threshold $`c`$ on the linear classifier's predicted probabilities, 
 which is obtained by minimizing the difference between sensitivity and specificity. 
@@ -58,12 +58,14 @@ tensorflow==2.12.0
 ## Usage
 
 ### Model hyperparameters
+
+#### Feature extractor
 The MiniRocket algorithm uses the default hyperparameters recommended by the authors [1] and their values are not exposed in the code.
 The remaining hyperparameters are defined as follows:
 
 - `time_worn_threshold`: (`float`, default = 0.7). <br>
 The minimum percentage of time that the patient must have worn the CGM device over a given week.
-The one-week periods during which the patient has worn the device for a percentage of time lower than `time_worn_threshold` are discared, i.e. they are not used neither for training nor for inference.
+
 
 - `blood_glucose_threshold`: (`int`, default = 54). <br>
 The blood glucose level below which we detect the onset of hypoglycemia, in mg/dL.
@@ -71,7 +73,6 @@ The blood glucose level below which we detect the onset of hypoglycemia, in mg/d
 
 - `episode_duration_threshold`: (`int`, default = 15). <br>
 The minimum length of a hypoglycemic event, in minutes.
-A hypoglycemic event is defined as the patient's blood glucose remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
 
 
 - `l1_penalty`: (`float`, default = 0.005). <br>
