@@ -58,19 +58,7 @@ tensorflow==2.12.0
 ### Hyperparameters
 
 The MiniRocket algorithm uses the default hyperparameters recommended by the authors [1] and their values are not exposed in the code.
-The remaining hyperparameters are defined as follows:
-
-- `time_worn_threshold`: (`float`, default = 0.7). <br>
-The minimum percentage of time that the patient must have worn the CGM device over a given week.
-
-
-- `blood_glucose_threshold`: (`int`, default = 54). <br>
-The blood glucose level below which we detect the onset of hypoglycemia, in mg/dL.
-
-
-- `episode_duration_threshold`: (`int`, default = 15). <br>
-The minimum length of a hypoglycemic event, in minutes.
-
+The linear classifier has the following hyperparameters:
 
 - `l1_penalty`: (`float`, default = 0.005). <br>
 The L1 penalty of the linear classifier.
@@ -91,13 +79,26 @@ The batch size used for training the linear classifier.
 - `epochs`: (`int`, default = 1000). <br>
 The maximum number of training epochs of the linear classifier.
 
-The code defines a hypoglycemic event as the patient's blood glucose level remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
+The following additional inputs are used for defining the model's input sequences and output labels:
 
-The code does not use the one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold`, neither for training nor for inference.
+- `time_worn_threshold`: (`float`, default = 0.7). <br>
+The minimum percentage of time that the patient must have worn the CGM device over a given week.
 
-The examples below show how to use the code for training and inference on a set of patients' CGM time series, which for this purpose are artificially generated.
+
+- `blood_glucose_threshold`: (`int`, default = 54). <br>
+The blood glucose level below which we detect the onset of hypoglycemia, in mg/dL.
+
+
+- `episode_duration_threshold`: (`int`, default = 15). <br>
+The minimum length of a hypoglycemic event, in minutes.
+
+A hypoglycemic event is defined as the patient's blood glucose level remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
+
+The one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold` are not used, neither for training nor for inference.
 
 ### Examples
+
+The examples below show how to use the code for training and inference on a set of patients' CGM time series, which for this purpose are artificially generated.
 
 #### Model training example
 ```python
