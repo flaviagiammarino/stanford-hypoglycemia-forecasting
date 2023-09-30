@@ -58,6 +58,7 @@ tensorflow==2.12.0
 ### Hyperparameters
 
 The MiniRocket algorithm uses the default hyperparameters recommended by the authors [1] and their values are not exposed in the code.
+
 The linear classifier has the following hyperparameters:
 
 - `l1_penalty`: (`float`, default = 0.005). <br>
