@@ -85,7 +85,6 @@ The following additional hyperparameters are used for deriving the model's input
 
 - `time_worn_threshold`: (`float`, default = 0.7). <br>
 The minimum percentage of time that the patient must have worn the CGM device over a given week.
-The one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold` are not used at any stage, neither for training nor for inference.
 
 
 - `blood_glucose_threshold`: (`int`, default = 54). <br>
@@ -95,7 +94,7 @@ The blood glucose level below which we detect the onset of hypoglycemia, in mg/d
 - `episode_duration_threshold`: (`int`, default = 15). <br>
 The minimum length of a hypoglycemic event, in minutes.
 
-A hypoglycemic event is defined as the patient's blood glucose level remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
+Note that the one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold` are not used at any stage, neither for training nor for inference.
 
 ### Examples
 
