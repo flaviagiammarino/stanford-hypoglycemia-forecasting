@@ -79,7 +79,7 @@ The batch size used for training the linear classifier.
 - `epochs`: (`int`, default = 1000). <br>
 The maximum number of training epochs of the linear classifier.
 
-The following additional hyperparameters are used for defining the model's input sequences and output labels:
+The following additional hyperparameters are used for deriving the model's input sequences and output labels:
 
 - `time_worn_threshold`: (`float`, default = 0.7). <br>
 The minimum percentage of time that the patient must have worn the CGM device over a given week.
@@ -94,7 +94,8 @@ The minimum length of a hypoglycemic event, in minutes.
 
 A hypoglycemic event is defined as the patient's blood glucose level remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
 
-The one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold` are not used, neither for training nor for inference.
+The one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold` are not used for deriving the model's input sequences and output labels, 
+neither for training nor for inference.
 
 ### Examples
 
