@@ -92,10 +92,12 @@ The blood glucose level below which we detect the onset of hypoglycemia, in mg/d
 - `episode_duration_threshold`: (`int`, default = 15). <br>
 The minimum length of a hypoglycemic event, in minutes.
 
-A hypoglycemic event is defined as the patient's blood glucose level remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
+Note that:
+- The one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold` are not used, neither for training nor for inference.
 
-The one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold` are not used for deriving the model's input sequences and output labels, 
-neither for training nor for inference.
+- A hypoglycemic event is defined as the patient's blood glucose level remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
+
+
 
 ### Examples
 
