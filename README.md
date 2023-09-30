@@ -61,23 +61,23 @@ The MiniRocket algorithm uses the default hyperparameters recommended by the aut
 The linear classifier has the following hyperparameters:
 
 - `l1_penalty`: (`float`, default = 0.005). <br>
-The L1 penalty of the linear classifier.
+The L1 penalty.
 
 
 - `l2_penalty`: (`float`, default = 0.05). <br>
-The L2 penalty of the linear classifier.
+The L2 penalty.
 
 
 - `learning_rate`: (`float`, default = 0.00001). <br>
-The learning rate used for training the linear classifier.
+The learning rate used for training.
 
 
 - `batch_size`: (`int`, default = 32). <br>
-The batch size used for training the linear classifier.
+The batch size used for training.
 
 
 - `epochs`: (`int`, default = 1000). <br>
-The maximum number of training epochs of the linear classifier.
+The maximum number of training epochs.
 
 The following additional hyperparameters are used for deriving the model's input sequences and output labels:
 
@@ -93,11 +93,9 @@ The blood glucose level below which we detect the onset of hypoglycemia, in mg/d
 The minimum length of a hypoglycemic event, in minutes.
 
 Note that:
-- The one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold` are not used, neither for training nor for inference.
-
 - A hypoglycemic event is defined as the patient's blood glucose level remaining below `blood_glucose_threshold` for at least `episode_duration_threshold` consecutive minutes.
-
-
+  
+- The one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold` are not used at any stage, neither for training nor for inference.
 
 ### Examples
 
