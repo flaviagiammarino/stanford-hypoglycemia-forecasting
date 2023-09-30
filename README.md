@@ -79,7 +79,7 @@ The batch size used for training the linear classifier.
 - `epochs`: (`int`, default = 1000). <br>
 The maximum number of training epochs of the linear classifier.
 
-The following additional inputs are used for defining the model's input sequences and output labels:
+The following additional hyperparameters are used for defining the model's input sequences and output labels:
 
 - `time_worn_threshold`: (`float`, default = 0.7). <br>
 The minimum percentage of time that the patient must have worn the CGM device over a given week.
