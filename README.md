@@ -68,13 +68,13 @@ The linear classifier has the following hyperparameters:
 - `batch_size`: (`int`). The batch size used for training.
 - `epochs`: (`int`). The maximum number of training epochs.
 
-Note that the linear classifier is trained with early stopping by monitoring the binary cross-entropy loss on a held-out 20% validation set with a patience of 10 epochs.
+Note that the linear classifier is trained with early stopping by monitoring the binary cross-entropy loss on a held-out 20% validation set with patience of 10 epochs.
 
 The following additional hyperparameters are used for deriving the model's input sequences and output labels:
 
 - `time_worn_threshold`: (`float`, default = 0.7). The minimum percentage of time that the patient must have worn the CGM device over a given week.
-- `blood_glucose_threshold`: (`int`, default = 54). The blood glucose level below which we detect the onset of hypoglycemia, in mg/dL.
-- `episode_duration_threshold`: (`int`, default = 15). The minimum length of a hypoglycemic event, in minutes.
+- `glucose_threshold`: (`int`, default = 54). The glucose level below which we detect the onset of hypoglycemia, in mg/dL.
+- `event_duration_threshold`: (`int`, default = 15). The minimum length of a hypoglycemic event, in minutes.
 
 Note that the one-week periods during which the patient has worn the device for a fraction of time lower than `time_worn_threshold` are not used at any stage, neither for training nor for inference.
 
@@ -91,11 +91,11 @@ from src.utils import get_labelled_sequences
 # minimum percentage of time that the patient must have worn the device over a given week
 time_worn_threshold = 0.7
 
-# blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
-blood_glucose_threshold = 54
+# glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
+glucose_threshold = 54
 
 # minimum length of a hypoglycemic event, in minutes
-episode_duration_threshold = 15
+event_duration_threshold = 15
 
 # generate some dummy data
 data = simulate_patients(
@@ -108,8 +108,8 @@ data = simulate_patients(
 sequences = get_labelled_sequences(
     data=data,
     time_worn_threshold=time_worn_threshold,
-    blood_glucose_threshold=blood_glucose_threshold,
-    episode_duration_threshold=episode_duration_threshold,
+    glucose_threshold=glucose_threshold,
+    event_duration_threshold=event_duration_threshold,
 )
 
 # train the model
@@ -167,11 +167,11 @@ from src.utils import get_labelled_sequences
 # minimum percentage of time that the patient must have worn the device over a given week
 time_worn_threshold = 0.7
 
-# blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
-blood_glucose_threshold = 54
+# glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
+glucose_threshold = 54
 
 # minimum length of a hypoglycemic event, in minutes
-episode_duration_threshold = 15
+event_duration_threshold = 15
 
 # generate some dummy data
 data = simulate_patients(
@@ -184,8 +184,8 @@ data = simulate_patients(
 sequences = get_labelled_sequences(
     data=data,
     time_worn_threshold=time_worn_threshold,
-    blood_glucose_threshold=blood_glucose_threshold,
-    episode_duration_threshold=episode_duration_threshold,
+    glucose_threshold=glucose_threshold,
+    event_duration_threshold=event_duration_threshold,
 )
 
 # load the model
@@ -205,11 +205,11 @@ from src.utils import get_train_test_sequences
 # minimum percentage of time that the patient must have worn the device over a given week
 time_worn_threshold = 0.7
 
-# blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
-blood_glucose_threshold = 54
+# glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
+glucose_threshold = 54
 
 # minimum length of a hypoglycemic event, in minutes
-episode_duration_threshold = 15
+event_duration_threshold = 15
 
 # generate some dummy data
 data = simulate_patients(
@@ -222,8 +222,8 @@ data = simulate_patients(
 training_sequences, test_sequences = get_train_test_sequences(
     data=data,
     time_worn_threshold=time_worn_threshold,
-    blood_glucose_threshold=blood_glucose_threshold,
-    episode_duration_threshold=episode_duration_threshold,
+    glucose_threshold=glucose_threshold,
+    event_duration_threshold=event_duration_threshold,
     test_size=0.3,
 )
 

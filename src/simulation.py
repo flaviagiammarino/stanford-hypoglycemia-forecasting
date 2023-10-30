@@ -33,8 +33,8 @@ def simulate_patient(id, freq, length):
         'ts': pandas.datetime.
             Timestamp.
 
-        'bg': float.
-            Blood glucose level.
+        'gl': float.
+            Glucose level.
     '''
     
     # fix the random seed
@@ -47,9 +47,9 @@ def simulate_patient(id, freq, length):
         freq=f'{freq}T'
     )
     
-    # generate the baseline blood glucose level
-    bg = np.random.uniform(low=70, high=180)
-    bg += sm.tsa.arma_generate_sample(
+    # generate the baseline glucose level
+    gl = np.random.uniform(low=70, high=180)
+    gl += sm.tsa.arma_generate_sample(
         ar=np.r_[1, - np.array([.75, -.25])],
         ma=np.r_[1, np.array([.65, .35])],
         scale=10.,
@@ -80,22 +80,22 @@ def simulate_patient(id, freq, length):
         return [fn(date) for date in ts.to_series().dt.date.unique()]
     
     # add some upward spikes around mealtimes
-    bg[ts.to_series().isin(simulate_timestamps(hours=[6, 7, 8]))] = np.random.uniform(low=180, high=400, size=length)
-    bg[ts.to_series().isin(simulate_timestamps(hours=[12, 13, 14]))] = np.random.uniform(low=180, high=400, size=length)
-    bg[ts.to_series().isin(simulate_timestamps(hours=[18, 19, 20]))] = np.random.uniform(low=180, high=400, size=length)
+    gl[ts.to_series().isin(simulate_timestamps(hours=[6, 7, 8]))] = np.random.uniform(low=180, high=400, size=length)
+    gl[ts.to_series().isin(simulate_timestamps(hours=[12, 13, 14]))] = np.random.uniform(low=180, high=400, size=length)
+    gl[ts.to_series().isin(simulate_timestamps(hours=[18, 19, 20]))] = np.random.uniform(low=180, high=400, size=length)
     
     # add some downward spikes after mealtimes
-    bg[ts.to_series().isin(simulate_timestamps(hours=[9, 10, 11]))] = np.random.uniform(low=20, high=70, size=length)
-    bg[ts.to_series().isin(simulate_timestamps(hours=[15, 16, 17]))] = np.random.uniform(low=20, high=70, size=length)
-    bg[ts.to_series().isin(simulate_timestamps(hours=[21, 22, 23]))] = np.random.uniform(low=20, high=70, size=length)
+    gl[ts.to_series().isin(simulate_timestamps(hours=[9, 10, 11]))] = np.random.uniform(low=20, high=70, size=length)
+    gl[ts.to_series().isin(simulate_timestamps(hours=[15, 16, 17]))] = np.random.uniform(low=20, high=70, size=length)
+    gl[ts.to_series().isin(simulate_timestamps(hours=[21, 22, 23]))] = np.random.uniform(low=20, high=70, size=length)
     
     # smooth the spikes
-    bg = gaussian_filter1d(input=bg, sigma=3)
+    gl = gaussian_filter1d(input=gl, sigma=3)
     
     # add some missing values
-    bg[np.random.randint(low=0, high=len(ts), size=int(0.1 * len(ts)))] = np.nan
+    gl[np.random.randint(low=0, high=len(ts), size=int(0.1 * len(ts)))] = np.nan
     
-    return pd.DataFrame({'id': id, 'ts': ts, 'bg': bg})
+    return pd.DataFrame({'id': id, 'ts': ts, 'gl': gl})
 
 
 def simulate_patients(freq, length, num):
@@ -122,19 +122,19 @@ def simulate_patients(freq, length, num):
         'id': int.
             Patient id.
 
-        'datetime': pandas.datetime.
+        'ts': pandas.datetime.
             Timestamp.
 
-        'glucose': float.
-            Blood glucose level.
+        'gl': float.
+            Glucose level.
     '''
     
     # generate the data
     data = pd.concat([simulate_patient(id, freq, length) for id in range(num)], axis=0)
     
     # reshape the data
-    data = data.set_index('ts').groupby(by='id')['bg'].resample(f'{freq}T').last().reset_index()
-    data = data.pivot(index='ts', columns=['id'], values=['bg'])
+    data = data.set_index('ts').groupby(by='id')['gl'].resample(f'{freq}T').last().reset_index()
+    data = data.pivot(index='ts', columns=['id'], values=['gl'])
     data.columns = data.columns.get_level_values(level='id')
     
     return data

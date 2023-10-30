@@ -2,38 +2,38 @@ import itertools
 import pandas as pd
 import numpy as np
 
-def get_event_durations(blood_glucose,
-                        blood_glucose_threshold):
+def get_event_durations(glucose,
+                        glucose_threshold):
     '''
     Get the durations of the hypoglycemic events of a given patient, in minutes.
     '''
     
     # get the frequency of the data, in minutes
-    freq = blood_glucose.index.to_series().diff().mode()[0].total_seconds() // 60
+    freq = glucose.index.to_series().diff().mode()[0].total_seconds() // 60
     
     # get the event indicators
-    x = np.logical_and(blood_glucose < blood_glucose_threshold, ~np.isnan(blood_glucose)).astype(int)
+    x = np.logical_and(glucose < glucose_threshold, ~np.isnan(glucose)).astype(int)
     
     # get the event durations
     return np.array([len(x) * freq for x in [list(group) for key, group in itertools.groupby(x)] if 1 in x], dtype=np.int32)
 
 
-def get_sequence_label(blood_glucose,
-                       episode_duration_threshold,
-                       blood_glucose_threshold):
+def get_sequence_label(glucose,
+                       event_duration_threshold,
+                       glucose_threshold):
     '''
     Label a patient's one-week subsequence as 1 if the patient experienced
     a hypoglycemic event during the week and as 0 otherwise.
     '''
     
     # get the durations of the patient's hypoglycemic events over the given week
-    d = get_event_durations(blood_glucose, blood_glucose_threshold)
+    d = get_event_durations(glucose, glucose_threshold)
     
     # check if the patient had any hypoglycemic events over the given week
     if len(d) > 0:
         
         # check if the length of any hypoglycemic event was above the threshold
-        if np.max(d) >= episode_duration_threshold:
+        if np.max(d) >= event_duration_threshold:
             
             # if the length of any event was above the threshold, label the sequence as 1
             return 1
@@ -49,8 +49,8 @@ def get_sequence_label(blood_glucose,
 
 def get_labelled_sequences(data,
                            time_worn_threshold,
-                           blood_glucose_threshold,
-                           episode_duration_threshold):
+                           glucose_threshold,
+                           event_duration_threshold):
     
     '''
     Get the labelled sequences as a list of dictionaries with the following items:
@@ -65,10 +65,10 @@ def get_labelled_sequences(data,
             The last timestamp of the subsequent week.
 
         X: np.ndarray.
-            The patient's blood glucose measurements over the current week.
+            The patient's glucose measurements over the current week.
 
         L: np.ndarray.
-            The patient's number of non-missing blood glucose measurements over the current week.
+            The patient's number of non-missing glucose measurements over the current week.
 
         Y: np.ndarray.
             A binary class label indicating whether the patient experienced a hypoglycemic event
@@ -106,7 +106,7 @@ def get_labelled_sequences(data,
                 L = len(X)
                 
                 # derive the class label
-                Y = get_sequence_label(Y, episode_duration_threshold, blood_glucose_threshold)
+                Y = get_sequence_label(Y, event_duration_threshold, glucose_threshold)
                 
                 # save the patient's data
                 sequences.append({
@@ -136,10 +136,10 @@ def get_unlabelled_sequences(data,
             The last timestamp of the subsequent week.
 
         X: np.ndarray.
-            The patient's blood glucose measurements over the current week.
+            The patient's glucose measurements over the current week.
 
         L: np.ndarray.
-            The patient's number of non-missing blood glucose measurements over the current week.
+            The patient's number of non-missing glucose measurements over the current week.
     '''
     
     # get the frequency of the data, in minutes
@@ -180,8 +180,8 @@ def get_unlabelled_sequences(data,
 
 def get_train_test_sequences(data,
                              time_worn_threshold,
-                             blood_glucose_threshold,
-                             episode_duration_threshold,
+                             glucose_threshold,
+                             event_duration_threshold,
                              test_size):
     '''
     Get the training and test sequences as lists of dictionaries with the following items:
@@ -196,10 +196,10 @@ def get_train_test_sequences(data,
             The last timestamp of the subsequent week.
 
         X: np.ndarray.
-            The patient's blood glucose measurements over the current week.
+            The patient's glucose measurements over the current week.
 
         L: np.ndarray.
-            The patient's number of non-missing blood glucose measurements over the current week.
+            The patient's number of non-missing glucose measurements over the current week.
 
         Y: np.ndarray.
             A binary class label indicating whether the patient experienced a hypoglycemic event
@@ -243,7 +243,7 @@ def get_train_test_sequences(data,
                 L = len(X)
                 
                 # derive the class label
-                Y = get_sequence_label(Y, episode_duration_threshold, blood_glucose_threshold)
+                Y = get_sequence_label(Y, event_duration_threshold, glucose_threshold)
                 
                 # save the patient's data
                 sequences.append({

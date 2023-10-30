@@ -5,11 +5,11 @@ from src.utils import get_labelled_sequences
 # minimum percentage of time that the patient must have worn the device over a given week
 time_worn_threshold = 0.7
 
-# blood glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
-blood_glucose_threshold = 54
+# glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
+glucose_threshold = 54
 
 # minimum length of a hypoglycemic event, in minutes
-episode_duration_threshold = 15
+event_duration_threshold = 15
 
 # generate some dummy data
 data = simulate_patients(
@@ -22,8 +22,8 @@ data = simulate_patients(
 sequences = get_labelled_sequences(
     data=data,
     time_worn_threshold=time_worn_threshold,
-    blood_glucose_threshold=blood_glucose_threshold,
-    episode_duration_threshold=episode_duration_threshold,
+    glucose_threshold=glucose_threshold,
+    event_duration_threshold=event_duration_threshold,
 )
 
 # load the model
