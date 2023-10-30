@@ -30,10 +30,10 @@ def simulate_patient(id, freq, length):
         'id': int.
             Patient id.
 
-        'datetime': pandas.datetime.
+        'ts': pandas.datetime.
             Timestamp.
 
-        'glucose': float.
+        'bg': float.
             Blood glucose level.
     '''
     
@@ -95,7 +95,7 @@ def simulate_patient(id, freq, length):
     # add some missing values
     bg[np.random.randint(low=0, high=len(ts), size=int(0.1 * len(ts)))] = np.nan
     
-    return pd.DataFrame({'id': id, 'datetime': ts, 'glucose': bg})
+    return pd.DataFrame({'id': id, 'ts': ts, 'bg': bg})
 
 
 def simulate_patients(freq, length, num):
@@ -133,8 +133,8 @@ def simulate_patients(freq, length, num):
     data = pd.concat([simulate_patient(id, freq, length) for id in range(num)], axis=0)
     
     # reshape the data
-    data = data.set_index('datetime').groupby(by='id')['glucose'].resample(f'{freq}T').last().reset_index()
-    data = data.pivot(index='datetime', columns=['id'], values=['glucose'])
+    data = data.set_index('ts').groupby(by='id')['bg'].resample(f'{freq}T').last().reset_index()
+    data = data.pivot(index='ts', columns=['id'], values=['bg'])
     data.columns = data.columns.get_level_values(level='id')
     
     return data

@@ -1,6 +1,6 @@
 from src.model import Model
 from src.simulation import simulate_patients
-from src.utils import get_train_test_data
+from src.utils import get_labelled_sequences
 
 # minimum percentage of time that the patient must have worn the device over a given week
 time_worn_threshold = 0.7
@@ -14,38 +14,22 @@ episode_duration_threshold = 15
 # generate some dummy data
 data = simulate_patients(
     freq=5,      # sampling frequency of the time series, in minutes
-    length=280,  # length of the time series, in days
+    length=84,   # length of the time series, in days
     num=100,     # number of time series
 )
 
-# split the data into training and test sets
-training_sequences, test_sequences = get_train_test_data(
+# split the data into sequences
+sequences = get_labelled_sequences(
     data=data,
     time_worn_threshold=time_worn_threshold,
     blood_glucose_threshold=blood_glucose_threshold,
     episode_duration_threshold=episode_duration_threshold,
-    test_size=0.2,
 )
 
-# fit the model to the training set
+# load the model
 model = Model()
+model.load(directory='model')
 
-model.fit(
-    sequences=training_sequences,
-    l1_penalty=0.005,
-    l2_penalty=0.05,
-    learning_rate=0.00001,
-    batch_size=32,
-    epochs=1000,
-    verbose=1
-)
-
-# evaluate the model on the test set
-metrics = model.evaluate(sequences=test_sequences)
-
+# evaluate the model
+metrics = model.evaluate(sequences=sequences)
 print(metrics)
-# accuracy           0.942500
-# balanced_accuracy  0.918495
-# sensitivity        0.878981
-# specificity        0.958009
-# auc                0.987846

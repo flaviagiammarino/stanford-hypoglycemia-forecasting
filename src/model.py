@@ -2,9 +2,11 @@ import os
 import logging
 import random
 import json
+import optuna
 import numpy as np
 import pandas as pd
-from sklearn.metrics import recall_score, accuracy_score, balanced_accuracy_score, roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, balanced_accuracy_score, roc_auc_score
 from sklearn.utils import shuffle
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 logging.getLogger('tensorflow').setLevel(logging.FATAL)
@@ -211,13 +213,15 @@ class Model():
         predictions, probabilities = self.classifier.predict(features)
         
         # calculate the model performance metrics
-        metrics = pd.DataFrame({
-            'accuracy': [accuracy_score(targets, predictions)],
-            'balanced_accuracy': [balanced_accuracy_score(targets, predictions)],
-            'sensitivity': [sensitivity(targets, predictions)],
-            'specificity': [specificity(targets, predictions)],
-            'auc': [roc_auc_score(targets, probabilities)]
-        }).transpose()
+        metrics = {
+            'accuracy': accuracy_score(targets, predictions),
+            'balanced_accuracy': balanced_accuracy_score(targets, predictions),
+            'precision': precision_score(targets, predictions),
+            'sensitivity': sensitivity(targets, predictions),
+            'specificity': specificity(targets, predictions),
+            'f1': f1_score(targets, predictions),
+            'auc': roc_auc_score(targets, probabilities)
+        }
         
         return metrics
         
@@ -240,6 +244,69 @@ class Model():
         } for i in range(len(sequences)))
         
         return results
+
+
+def tune_hyperparameters(sequences, n_splits, n_trials):
+    '''
+    Tune the hyperparameters.
+    '''
+    
+    # define the objective function
+    def objective(trial):
+        
+        # sample the hyperparameters
+        params = {
+            'l1_penalty': trial.suggest_categorical('l1_penalty', [1e-05, 1e-04, 1e-03, 1e-2, 1e-1]),
+            'l2_penalty': trial.suggest_categorical('l2_penalty', [1e-05, 1e-04, 1e-03, 1e-2, 1e-1]),
+            'learning_rate': trial.suggest_categorical('learning_rate', [1e-05, 1e-04, 1e-03, 1e-2, 1e-1]),
+            'batch_size': trial.suggest_categorical('batch_size', [8, 16, 32, 64, 128, 256, 512]),
+            'epochs': trial.suggest_categorical('epochs', [1000]),
+        }
+        
+        # split the data
+        skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+        skf = skf.split(X=sequences, y=[s['Y'] for s in sequences])
+        
+        scores = []
+        
+        # loop across the splits
+        for training_index, test_index in skf:
+            
+            # train the model
+            model = Model()
+            
+            model.fit(
+                sequences=[sequences[i] for i in training_index],
+                l1_penalty=params['l1_penalty'],
+                l2_penalty=params['l2_penalty'],
+                learning_rate=params['learning_rate'],
+                batch_size=params['batch_size'],
+                epochs=params['epochs'],
+                verbose=0
+            )
+            
+            # evaluate the model
+            metrics = model.evaluate(sequences=[sequences[i] for i in test_index])
+            
+            # save the score
+            scores.append(metrics['balanced_accuracy'])
+        
+        # return the average score across the splits
+        return np.nanmean(scores)
+    
+    # maximize the objective function
+    study = optuna.create_study(
+        direction='maximize',
+        sampler=optuna.samplers.RandomSampler(seed=42)
+    )
+    
+    study.optimize(
+        objective,
+        n_trials=n_trials,
+    )
+    
+    # return the best parameters and the best score
+    return study.best_params, study.best_value
 
 
 def get_optimal_threshold(inputs, outputs, model):

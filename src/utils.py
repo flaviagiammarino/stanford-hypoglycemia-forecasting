@@ -47,13 +47,13 @@ def get_sequence_label(blood_glucose,
         return 0
 
 
-def get_training_data(data,
-                      time_worn_threshold,
-                      blood_glucose_threshold,
-                      episode_duration_threshold):
+def get_labelled_sequences(data,
+                           time_worn_threshold,
+                           blood_glucose_threshold,
+                           episode_duration_threshold):
     
     '''
-    Get the training data as a list of dictionaries with the following items:
+    Get the labelled sequences as a list of dictionaries with the following items:
 
         patient: str.
             The patient id.
@@ -121,10 +121,10 @@ def get_training_data(data,
     return sequences
 
 
-def get_inference_data(data,
-                       time_worn_threshold):
+def get_unlabelled_sequences(data,
+                             time_worn_threshold):
     '''
-    Get the inference data as a list of dictionaries with the following items:
+    Get the unlabelled sequences as a list of dictionaries with the following items:
 
         patient: str.
             The patient id.
@@ -178,13 +178,13 @@ def get_inference_data(data,
     return sequences
 
 
-def get_train_test_data(data,
-                        time_worn_threshold,
-                        blood_glucose_threshold,
-                        episode_duration_threshold,
-                        test_size):
+def get_train_test_sequences(data,
+                             time_worn_threshold,
+                             blood_glucose_threshold,
+                             episode_duration_threshold,
+                             test_size):
     '''
-    Get the training and test data as lists of dictionaries with the following items:
+    Get the training and test sequences as lists of dictionaries with the following items:
 
         patient: str.
             The patient id.
