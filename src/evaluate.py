@@ -11,14 +11,18 @@ glucose_threshold = 54
 # minimum length of a hypoglycemic event, in minutes
 event_duration_threshold = 15
 
-# generate some dummy data
+# generate a dummy dataset
 data = simulate_patients(
     freq=5,      # sampling frequency of the time series, in minutes
     length=84,   # length of the time series, in days
     num=100,     # number of time series
 )
 
-# split the data into sequences
+# reshape the dataset from long to wide
+data = data.pivot(index='ts', columns=['id'], values=['gl'])
+data.columns = data.columns.get_level_values(level='id')
+
+# split the dataset into sequences
 sequences = get_labelled_sequences(
     data=data,
     time_worn_threshold=time_worn_threshold,

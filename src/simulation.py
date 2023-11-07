@@ -131,10 +131,8 @@ def simulate_patients(freq, length, num):
     
     # generate the data
     data = pd.concat([simulate_patient(id, freq, length) for id in range(num)], axis=0)
-    
-    # reshape the data
+
+    # sort the data
     data = data.set_index('ts').groupby(by='id')['gl'].resample(f'{freq}T').last().reset_index()
-    data = data.pivot(index='ts', columns=['id'], values=['gl'])
-    data.columns = data.columns.get_level_values(level='id')
     
     return data

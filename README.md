@@ -82,7 +82,7 @@ Note that the one-week periods during which the patient has worn the device for 
 
 The examples below show how to use the code for training and inference on a set of patients' CGM time series, which for this purpose are artificially generated.
 
-#### Model training example
+#### Model training
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
@@ -97,14 +97,18 @@ glucose_threshold = 54
 # minimum length of a hypoglycemic event, in minutes
 event_duration_threshold = 15
 
-# generate some dummy data
+# generate a dummy dataset
 data = simulate_patients(
     freq=5,      # sampling frequency of the time series, in minutes
     length=84,   # length of the time series, in days
     num=100,     # number of time series
 )
 
-# split the data into sequences
+# reshape the dataset from long to wide
+data = data.pivot(index='ts', columns=['id'], values=['gl'])
+data.columns = data.columns.get_level_values(level='id')
+
+# split the dataset into sequences
 sequences = get_labelled_sequences(
     data=data,
     time_worn_threshold=time_worn_threshold,
@@ -117,10 +121,10 @@ model = Model()
 
 model.fit(
     sequences=sequences,
-    l1_penalty=0.01,
-    l2_penalty=0.01,
-    learning_rate=0.001,
-    batch_size=512,
+    l1_penalty=0.005,
+    l2_penalty=0.05,
+    learning_rate=0.00001,
+    batch_size=32,
     epochs=1000,
     verbose=1
 )
@@ -128,7 +132,7 @@ model.fit(
 # save the model
 model.save(directory='model')
 ```
-#### Model inference example
+#### Model inference
 ```python
 from src.model import Model
 from src.simulation import simulate_patients
@@ -137,14 +141,18 @@ from src.utils import get_unlabelled_sequences
 # minimum percentage of time that the patient must have worn the device over a given week
 time_worn_threshold = 0.7
 
-# generate some dummy data
+# generate a dummy dataset
 data = simulate_patients(
     freq=5,      # sampling frequency of the time series, in minutes
     length=7,    # length of the time series, in days
     num=100,     # number of time series
 )
 
-# split the data into sequences
+# reshape the dataset from long to wide
+data = data.pivot(index='ts', columns=['id'], values=['gl'])
+data.columns = data.columns.get_level_values(level='id')
+
+# split the dataset into sequences
 sequences = get_unlabelled_sequences(
     data=data,
     time_worn_threshold=time_worn_threshold,
@@ -156,46 +164,8 @@ model.load(directory='model')
 
 # generate the model predictions
 predictions = model.predict(sequences=sequences)
-print(predictions.head(10))
 ```
-#### Model evaluation example
-```python
-from src.model import Model
-from src.simulation import simulate_patients
-from src.utils import get_labelled_sequences
 
-# minimum percentage of time that the patient must have worn the device over a given week
-time_worn_threshold = 0.7
-
-# glucose threshold below which we detect the onset of hypoglycemia, in mg/dL
-glucose_threshold = 54
-
-# minimum length of a hypoglycemic event, in minutes
-event_duration_threshold = 15
-
-# generate some dummy data
-data = simulate_patients(
-    freq=5,      # sampling frequency of the time series, in minutes
-    length=84,   # length of the time series, in days
-    num=100,     # number of time series
-)
-
-# split the data into sequences
-sequences = get_labelled_sequences(
-    data=data,
-    time_worn_threshold=time_worn_threshold,
-    glucose_threshold=glucose_threshold,
-    event_duration_threshold=event_duration_threshold,
-)
-
-# load the model
-model = Model()
-model.load(directory='model')
-
-# evaluate the model
-metrics = model.evaluate(sequences=sequences)
-print(metrics)
-```
 ## References
 
 [1] Dempster, A., Schmidt, D.F. and Webb, G.I., 2021. MiniRocket: A very fast (almost) deterministic transform for time series classification. In *Proceedings of the 27th ACM SIGKDD conference on knowledge discovery & data mining* (pp. 248-257).
