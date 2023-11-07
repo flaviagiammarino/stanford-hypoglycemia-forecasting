@@ -67,7 +67,6 @@ for i, (train_index, test_index) in enumerate(skf.split(X=[s['X'] for s in seque
     print('------------------------------------')
     for k, v in metrics.items():
         print(f'{k}: {format(v, ".4f")}')
-    print('\n')
 
 # organize the results in a data frame
 results = pd.DataFrame(results)
