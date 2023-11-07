@@ -28,7 +28,7 @@ class Transformer:
         L = np.array([s['L'] for s in sequences], dtype=np.int32)
         
         # get the parameters
-        self.parameters = fit(X=X, L=L, reference_length=np.mean(L))
+        self.parameters = fit(X=X, L=L, reference_length=np.min(L))
     
     def transform(self, sequences):
         
