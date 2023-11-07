@@ -63,7 +63,7 @@ for i, (train_index, test_index) in enumerate(skf.split(X=[s['X'] for s in seque
     
     # display the results
     print('------------------------------------')
-    print(f'fold {i} of {skf.n_splits}:')
+    print(f'fold {i + 1} of {skf.n_splits}:')
     print('------------------------------------')
     for k, v in metrics.items():
         print(f'{k}: {format(v, ".4f")}')
