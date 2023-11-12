@@ -34,7 +34,7 @@ sequences = get_labelled_sequences(
 )
 
 # split the sequences into folds
-skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
 
 # create a list for storing the results for each fold
 results = []
@@ -47,11 +47,13 @@ for i, (train_index, test_index) in enumerate(skf.split(X=[s['X'] for s in seque
 
     model.fit(
         sequences=[sequences[i] for i in train_index],
+        sequence_length=int(7 * 24 * 60 // 5),
         l1_penalty=0.005,
         l2_penalty=0.05,
         learning_rate=0.00001,
         batch_size=32,
         epochs=1000,
+        seed=42,
         verbose=0
     )
 

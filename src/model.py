@@ -18,8 +18,7 @@ class Transformer:
     '''
     Transform the inputs with random convolutional kernels.
     '''
-    
-    def fit(self, sequences):
+    def fit(self, sequences, reference_length, seed):
         
         # extract the input sequences
         X = np.concatenate([s['X'] for s in sequences], dtype=np.float32)
@@ -28,7 +27,7 @@ class Transformer:
         L = np.array([s['L'] for s in sequences], dtype=np.int32)
         
         # get the parameters
-        self.parameters = fit(X=X, L=L)
+        self.parameters = fit(X=X, L=L, reference_length=reference_length, seed=seed)
     
     def transform(self, sequences):
         
@@ -46,7 +45,6 @@ class Classifier():
     '''
     Fit an L1 and L2 regularised linear classifier to the transformed inputs.
     '''
-    
     def fit(self,
             features,
             targets,
@@ -55,6 +53,7 @@ class Classifier():
             learning_rate,
             batch_size,
             epochs,
+            seed,
             verbose):
         
         # copy the features and targets
@@ -70,7 +69,7 @@ class Classifier():
         features = (features - loc) / scale
         
         # build the model
-        set_global_determinism(42)
+        set_global_determinism(seed)
         
         model = tf.keras.models.Sequential([
             tf.keras.layers.Dense(
@@ -132,17 +131,23 @@ class Model():
     
     def fit(self,
             sequences,
+            sequence_length,
             l1_penalty,
             l2_penalty,
             learning_rate,
             batch_size,
             epochs,
+            seed,
             verbose):
         
         # extract the features
         transformer = Transformer()
-        transformer.fit(sequences)
-        features = transformer.transform(sequences)
+        transformer.fit(
+            sequences=sequences,
+            reference_length=sequence_length,
+            seed=seed
+        )
+        features = transformer.transform(sequences=sequences)
         
         # extract the targets
         targets = np.array([s['Y'] for s in sequences], dtype=np.int32)
@@ -158,6 +163,7 @@ class Model():
             learning_rate=learning_rate,
             batch_size=batch_size,
             epochs=epochs,
+            seed=seed,
             verbose=verbose
         )
         

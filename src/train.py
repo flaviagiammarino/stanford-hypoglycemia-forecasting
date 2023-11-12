@@ -35,11 +35,13 @@ model = Model()
 
 model.fit(
     sequences=sequences,
+    sequence_length=int(7 * 24 * 60 // 5),
     l1_penalty=0.005,
     l2_penalty=0.05,
     learning_rate=0.00001,
     batch_size=32,
     epochs=1000,
+    seed=42,
     verbose=1
 )
 

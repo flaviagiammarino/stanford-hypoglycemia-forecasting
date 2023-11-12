@@ -12,6 +12,10 @@
 from numba import njit, prange, vectorize
 import numpy as np
 
+@njit
+def set_seed(value):
+    np.random.seed(value)
+
 @njit("float32[:](float32[:],int32[:],int32[:],int32[:],float32[:])", fastmath = True, parallel = False, cache = True)
 def _fit_biases(X, L, dilations, num_features_per_dilation, quantiles):
 
@@ -134,7 +138,7 @@ def _fit_dilations(reference_length, num_features, max_dilations_per_kernel):
 def _quantiles(n):
     return np.array([(_ * ((np.sqrt(5) + 1) / 2)) % 1 for _ in range(1, n + 1)], dtype = np.float32)
 
-def fit(X, L, reference_length = None, num_features = 10_000, max_dilations_per_kernel = 32):
+def fit(X, L, reference_length = None, num_features = 10_000, max_dilations_per_kernel = 32, seed=42):
 
     # note in relation to dilation:
     # * change *reference_length* according to what is appropriate for your
@@ -153,6 +157,7 @@ def fit(X, L, reference_length = None, num_features = 10_000, max_dilations_per_
 
     quantiles = _quantiles(num_kernels * num_features_per_kernel)
 
+    set_seed(seed)
     biases = _fit_biases(X, L, dilations, num_features_per_dilation, quantiles)
 
     return dilations, num_features_per_dilation, biases
