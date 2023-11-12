@@ -68,7 +68,7 @@ The linear classifier has the following hyperparameters:
 - `batch_size`: (`int`). The batch size used for training.
 - `epochs`: (`int`). The maximum number of training epochs.
 
-Note that the linear classifier is trained with early stopping by monitoring the binary cross-entropy loss on a held-out 20% validation set with patience of 10 epochs.
+Note that the linear classifier is trained with early stopping by monitoring the binary cross-entropy loss on a held-out 30% validation set with patience of 10 epochs.
 
 The following additional hyperparameters are used for deriving the model's input sequences and output labels:
 
