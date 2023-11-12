@@ -28,7 +28,7 @@ class Transformer:
         L = np.array([s['L'] for s in sequences], dtype=np.int32)
         
         # get the parameters
-        self.parameters = fit(X=X, L=L, reference_length=np.min(L))
+        self.parameters = fit(X=X, L=L)
     
     def transform(self, sequences):
         
@@ -92,11 +92,12 @@ class Classifier():
             batch_size=batch_size,
             epochs=epochs,
             shuffle=True,
-            validation_split=0.2,
+            validation_split=0.3,
             callbacks=[
                 tf.keras.callbacks.EarlyStopping(
                     monitor='val_loss',
                     patience=10,
+                    start_from_epoch=100,
                     restore_best_weights=True,
                 )
             ],
@@ -248,7 +249,7 @@ def get_optimal_threshold(inputs, outputs, model):
     '''
     Find the decision threshold that minimizes the difference between sensitivity and specificity.
     '''
-    thresholds = np.linspace(0.05, 0.95, 19)
+    thresholds = np.linspace(0.01, 0.99, 99)
     differences = np.array([])
     for threshold in thresholds:
         predictions = (model(inputs).numpy().flatten() > threshold).astype(int)
