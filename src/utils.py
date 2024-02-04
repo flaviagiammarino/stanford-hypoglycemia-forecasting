@@ -13,7 +13,7 @@ def get_event_durations(glucose, glucose_threshold):
     # get the event indicators
     x = np.logical_and(glucose < glucose_threshold, ~np.isnan(glucose)).astype(int)
     
-    # get the event durations
+    # calculate the event durations
     return np.array([len(x) * freq for x in [list(group) for key, group in itertools.groupby(x)] if 1 in x], dtype=np.int32)
 
 

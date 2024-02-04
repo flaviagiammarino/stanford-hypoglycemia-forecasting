@@ -23,7 +23,7 @@ It then splits the patients' CGM time series into non-overlapping one-week seque
 - $`X^{i}_{t}`$ is the time series of CGM readings of patient $`i`$ on week $`t`$ (e.g. 2,016 readings for a patient wearing a 5-minute CGM sensor 100% of the time),
 - $`y^{i}_{t + 1}`$ is the binary label of patient $`i`$ on week $`t + 1`$, which is equal to 1 if patient $`i`$ experienced a hypoglycemic event during week $`t + 1`$ and equal to 0 otherwise. 
 
-The input sequences $`X^{i}_{t}`$ are fed to the MiniRocket algorithm which transforms them into 9,996 features $`Z^{i}_{t}`$.
+The input sequences $`X^{i}_{t}`$ are fed to the MiniRocket algorithm which transforms them into 10,000 features $`Z^{i}_{t}`$.
 The extracted features $`Z^{i}_{t}`$ are then used together with the binary labels $`y^{i}_{t + 1}`$ for training the linear classifier.
 
 Note that the $`(X^{i}_{t}, y^{i}_{t + 1})`$ training pairs of different patients are pooled together before being fed to the model, 
@@ -34,7 +34,7 @@ which is obtained by minimizing the difference between sensitivity and specifici
 
 ### Model inference
 The inference algorithm takes as input the one-week sequences $`X^{i}_{t}`$ of one or more patients, which are defined as outlined above.
-The input sequences $`X^{i}_{t}`$ are fed to the MiniRocket algorithm, which transforms them into 9,996 features $`Z^{i}_{t}`$.
+The input sequences $`X^{i}_{t}`$ are fed to the MiniRocket algorithm, which transforms them into 10,000 features $`Z^{i}_{t}`$.
 The extracted features $`Z^{i}_{t}`$ are then passed to the linear classifier which outputs the predicted hypoglycemic event probability $`\hat{p}^{i}_{t + 1}`$ for the subsequent week $`t + 1`$.
 
 The predicted binary labels are obtained by comparing the predicted probability $`\hat{p}^{i}_{t + 1}`$ with the decision threshold $`c`$ previously estimated on the training set.
