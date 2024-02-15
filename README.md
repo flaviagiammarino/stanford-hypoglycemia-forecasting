@@ -1,4 +1,4 @@
-# Machine learning model for week-ahead hypoglycemia prediction from continuous glucose monitoring data
+# A machine learning model for week-ahead hypoglycemia prediction from continuous glucose monitoring data
 ![license](https://img.shields.io/github/license/flaviagiammarino/stanford-hypoglycemia-forecasting)
 ![languages](https://img.shields.io/github/languages/top/flaviagiammarino/stanford-hypoglycemia-forecasting)
 
