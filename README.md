@@ -53,7 +53,6 @@ numba==0.56.4
 statsmodels==0.13.5
 scikit-learn==1.2.2
 tensorflow==2.13.0
-optuna==3.4.0
 ```
 
 ### Hyperparameters
